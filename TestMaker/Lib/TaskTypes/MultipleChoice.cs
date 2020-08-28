@@ -7,12 +7,12 @@ namespace Lib.TaskTypes
     {
         public string Question { get; protected set; }
         public List<string> Options { get; protected set; }
-        public List<string> RightAnswers { get; protected set; }
+        public List<int> RightAnswersIndexes { get; protected set; }
         public int Time { get; protected set; }
         public bool IsTimeLimited { get; protected set; }
         public int Mark { get; protected set; }
 
-        public MultipleChoice(string question, List<string> options, List<string> rightAnswers, int mark)
+        public MultipleChoice(string question, List<string> options, List<int> rightAnswersIndexes, int mark)
         {
             Question = question;
 
@@ -25,13 +25,13 @@ namespace Lib.TaskTypes
                 Options = new List<string>(options);
             }
 
-            if (rightAnswers is null)
+            if (rightAnswersIndexes is null)
             {
-                RightAnswers = new List<string>();
+                RightAnswersIndexes = new List<int>();
             }
             else
             {
-                RightAnswers = new List<string>(rightAnswers);
+                RightAnswersIndexes = new List<int>(rightAnswersIndexes);
             }
 
             Mark = mark;
@@ -40,8 +40,8 @@ namespace Lib.TaskTypes
         }
 
         [JsonConstructor]
-        public MultipleChoice(int time, string question, List<string> options, List<string> rightAnswers, int mark)
-            : this(question, options, rightAnswers, mark)
+        public MultipleChoice(int time, string question, List<string> options, List<int> rightAnswersIndexes, int mark)
+            : this(question, options, rightAnswersIndexes, mark)
         {
             if (time > 0)
             {
