@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Lib;
 using Lib.TaskTypes;
+using UI;
 
 namespace ConsoleTest
 {
@@ -34,13 +36,36 @@ namespace ConsoleTest
                 task2
             };
 
-            var test = new Test("Test", tasks);
+            var subTopic1 = new Topic("lol", tasks);
+            var subTopicList = new List<Topic>()
+            {
+                subTopic1
+            };
+
+            var subTopic2 = new Topic("kek", tasks);
+
+            var topic1 = new Topic("prelol", null, subTopicList);
+
+            subTopicList = new List<Topic>()
+            {
+                subTopic2,
+                subTopic1
+            };
+            var topic2 = new Topic("prekek", null, subTopicList);
+
+            var topicList = new List<Topic>()
+            {
+                topic2,
+                topic1
+            };
+
+            var test = new Test("Test", topicList);
 
             SaveLoad.Save(test);
 
             test = SaveLoad.Load("Test");
 
-            Console.WriteLine(test.Name);
+            Console.WriteLine(test.Topics[0].Name);
         }
     }
 }

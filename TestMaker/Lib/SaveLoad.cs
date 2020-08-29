@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+using Lib;
 
 namespace Lib
 {
@@ -12,7 +13,7 @@ namespace Lib
 
         public static void Save(Test test)
         {
-            using (var writer = new StreamWriter($"D:\\{test.Name}.json"))
+            using (var writer = new StreamWriter($"D:\\{test.Name}.tmt"))
             {
                 writer.WriteLine(JsonConvert.SerializeObject(test, serializerSettings));
             }
@@ -22,7 +23,7 @@ namespace Lib
         {
             Test test;
 
-            using (var reader = new StreamReader($"D:\\{testName}.json"))
+            using (var reader = new StreamReader($"D:\\{testName}.tmt"))
             {
                 var text = reader.ReadToEnd();
                 test = JsonConvert.DeserializeObject<Test>(text, serializerSettings);

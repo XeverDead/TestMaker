@@ -8,19 +8,19 @@ namespace Lib
         public string Name { get; protected set; }
         public int Time { get; protected set; }
         public bool IsTimeLimited { get; protected set; }
-        public List<ITask> Tasks { get; protected set; }
+        public List<Topic> Topics { get; protected set; }
 
-        public Test(string name, List<ITask> tasks)
+        public Test(string name, List<Topic> topics)
         {
             Name = name;
 
-            if (tasks is null)
+            if (topics is null)
             {
-                Tasks = new List<ITask>();
+                Topics = new List<Topic>();
             }
             else
             {
-                Tasks = new List<ITask>(tasks);
+                Topics = new List<Topic>(topics);
             }
 
             Time = 0;
@@ -28,8 +28,8 @@ namespace Lib
         }
 
         [JsonConstructor]
-        public Test(int time, string name, List<ITask> tasks)
-            : this(name, tasks)
+        public Test(int time, string name, List<Topic> topics)
+            : this(name, topics)
         {
             if (time > 0)
             {
