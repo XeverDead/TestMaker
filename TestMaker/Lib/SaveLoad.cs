@@ -1,17 +1,17 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
-using Lib;
 
 namespace Lib
 {
-    public static class SaveLoad
+    public class SaveLoad: ISaveLoad
     {
-        private static JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+        private JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
         {
-            TypeNameHandling = TypeNameHandling.Auto
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = Formatting.Indented
         };
 
-        public static void Save(Test test)
+        public void Save(Test test)
         {
             using (var writer = new StreamWriter($"D:\\{test.Name}.tmt"))
             {
@@ -19,7 +19,7 @@ namespace Lib
             }
         }
 
-        public static Test Load(string testName)
+        public Test Load(string testName)
         {
             Test test;
 

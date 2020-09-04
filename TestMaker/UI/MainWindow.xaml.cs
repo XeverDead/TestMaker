@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lib.TaskTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,20 @@ namespace UI
         public MainWindow()
         {
             InitializeComponent();
+
+            var options = new List<string>()
+            {
+                "lol",
+                "kek",
+                "[t[",
+                "kjk",
+            };
+
+            var task = new SingleChoice("lol?", options, 0, 5);
+
+            var page = new SingleChoicePage(task);
+
+            Content = page;
         }
     }
 }

@@ -3,19 +3,14 @@ using Newtonsoft.Json;
 
 namespace Lib.TaskTypes
 {
-    public class SingleChoice : ITask
+    public class SingleChoice : Task
     {
-        public string Question { get; protected set; }
         public List<string> Options { get; protected set; }
         public int RightAnswerIndex { get; protected set; }
-        public int Time { get; protected set; }
-        public bool IsTimeLimited { get; protected set; }
-        public int Mark { get; protected set; }
 
         public SingleChoice(string question, List<string> options, int rightAnswerIndex, int mark)
+            : base(question, options, mark)
         {
-            Question = question;
-
             if (options is null)
             {
                 Options = new List<string>();
@@ -26,20 +21,22 @@ namespace Lib.TaskTypes
             }
 
             RightAnswerIndex = rightAnswerIndex;
-            Mark = mark;
-            Time = 0;
-            IsTimeLimited = false;
         }
 
         [JsonConstructor]
         public SingleChoice(int time, string question, List<string> options, int rightAnswerIndex, int mark)
-            : this(question, options, rightAnswerIndex, mark)
+            : base(time, question, options, mark) 
         {
-            if (time > 0)
+            if (options is null)
             {
-                Time = time;
-                IsTimeLimited = true;
+                Options = new List<string>();
             }
+            else
+            {
+                Options = new List<string>(options);
+            }
+
+            RightAnswerIndex = rightAnswerIndex;
         }
     }
 }

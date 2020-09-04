@@ -7,10 +7,10 @@ namespace Lib
     {
         public string Name { get; private set; }
         public List<Topic> SubTopics { get; private set; }
-        public List<ITask> Tasks { get; private set; }
+        public List<Task> Tasks { get; private set; }
         public bool HasSubTopics { get; private set; }
 
-        public Topic(string name, List<ITask> tasks)
+        public Topic(string name, List<Task> tasks)
         {
             Name = name;
             SubTopics = new List<Topic>();
@@ -18,16 +18,16 @@ namespace Lib
 
             if (tasks == null)
             {
-                Tasks = new List<ITask>();
+                Tasks = new List<Task>();
             }
             else
             {
-                Tasks = new List<ITask>(tasks);
+                Tasks = new List<Task>(tasks);
             }
         }
 
         [JsonConstructor]
-        public Topic(string name, List<ITask> tasks, List<Topic> subTopics)
+        public Topic(string name, List<Task> tasks, List<Topic> subTopics)
             : this(name, tasks)
         {
             if (subTopics != null)

@@ -30,7 +30,7 @@ namespace ConsoleTest
             var index2 = 1;
             var task2 = new SingleChoice(question2, options2, index2, index2);
 
-            var tasks = new List<ITask>()
+            var tasks = new List<Lib.Task>()
             {
                 task1,
                 task2
@@ -61,9 +61,9 @@ namespace ConsoleTest
 
             var test = new Test("Test", topicList);
 
-            SaveLoad.Save(test);
+            new SaveLoad().Save(test);
 
-            test = SaveLoad.Load("Test");
+            test = new SaveLoad().Load("Test");
 
             Console.WriteLine(test.Topics[0].Name);
         }
