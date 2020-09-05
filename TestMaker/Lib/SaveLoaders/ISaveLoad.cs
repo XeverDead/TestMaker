@@ -4,6 +4,6 @@
     {
         void Save(Test test);
 
-        Test Load(string testName);
+        Test Load(string path);
     }
 }

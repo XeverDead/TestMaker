@@ -19,11 +19,11 @@ namespace Lib
             }
         }
 
-        public Test Load(string testName)
+        public Test Load(string path)
         {
             Test test;
 
-            using (var reader = new StreamReader($"D:\\{testName}.tmt"))
+            using (var reader = new StreamReader($"D:\\{path}"))
             {
                 var text = reader.ReadToEnd();
                 test = JsonConvert.DeserializeObject<Test>(text, serializerSettings);

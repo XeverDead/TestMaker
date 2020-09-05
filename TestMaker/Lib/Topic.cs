@@ -9,6 +9,7 @@ namespace Lib
         public List<Topic> SubTopics { get; private set; }
         public List<Task> Tasks { get; private set; }
         public bool HasSubTopics { get; private set; }
+        public bool HasTasks { get; private set; }
 
         public Topic(string name, List<Task> tasks)
         {
@@ -16,13 +17,15 @@ namespace Lib
             SubTopics = new List<Topic>();
             HasSubTopics = false;
 
-            if (tasks == null)
+            if (tasks == null || tasks.Count == 0)
             {
                 Tasks = new List<Task>();
+                HasTasks = false;
             }
             else
             {
                 Tasks = new List<Task>(tasks);
+                HasTasks = true;
             }
         }
 
@@ -30,7 +33,7 @@ namespace Lib
         public Topic(string name, List<Task> tasks, List<Topic> subTopics)
             : this(name, tasks)
         {
-            if (subTopics != null)
+            if (subTopics != null && subTopics.Count > 0)
             {
                 SubTopics = new List<Topic>(subTopics);
                 HasSubTopics = true;

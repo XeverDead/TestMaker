@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Core;
 using Lib;
 using Lib.TaskTypes;
 using UI;
@@ -12,7 +13,7 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            var question1 = "lol";
+            var question1 = "first";
             var options1 = new List<string>
             {
                 "lol",
@@ -21,7 +22,7 @@ namespace ConsoleTest
             var index1 = 0;
             var task1 = new SingleChoice(question1, options1, index1, index1);
 
-            var question2 = "kek";
+            var question2 = "second";
             var options2 = new List<string>
             {
                 "ne kek",
@@ -36,22 +37,22 @@ namespace ConsoleTest
                 task2
             };
 
-            var subTopic1 = new Topic("lol", tasks);
+            var subTopic1 = new Topic("first sub", tasks);
             var subTopicList = new List<Topic>()
             {
                 subTopic1
             };
 
-            var subTopic2 = new Topic("kek", tasks);
+            var subTopic2 = new Topic("second sub", tasks);
 
-            var topic1 = new Topic("prelol", null, subTopicList);
+            var topic1 = new Topic("has 1", null, subTopicList);
 
             subTopicList = new List<Topic>()
             {
                 subTopic2,
                 subTopic1
             };
-            var topic2 = new Topic("prekek", null, subTopicList);
+            var topic2 = new Topic("has 2", null, subTopicList);
 
             var topicList = new List<Topic>()
             {
@@ -63,9 +64,14 @@ namespace ConsoleTest
 
             new SaveLoad().Save(test);
 
-            test = new SaveLoad().Load("Test");
+            var core = new DefaultCore("Test.tmt");
 
-            Console.WriteLine(test.Topics[0].Name);
+            Console.WriteLine(core.CurrentTopic.Name + " -> " + core.CurrentTask.Question);
+
+            while (core.SetNewCurrentTask())
+            {
+                Console.WriteLine(core.CurrentTopic.Name + " -> " + core.CurrentTask.Question);
+            }
         }
     }
 }
