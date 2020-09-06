@@ -1,5 +1,4 @@
-﻿using Lib.TaskTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -12,15 +11,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Lib.TaskTypes;
 
-namespace UI
+namespace UI.Pages
 {
     /// <summary>
-    /// Логика взаимодействия для SingleChoicePage.xaml
+    /// Логика взаимодействия для MultipleChoicePage.xaml
     /// </summary>
-    public partial class SingleChoicePage : Page
+    public partial class MultipleChoicePage : Page
     {
-        public SingleChoicePage(SingleChoice task)
+        public MultipleChoicePage(MultipleChoice task)
         {
             InitializeComponent();
 
@@ -71,7 +71,7 @@ namespace UI
             var button = new ToggleButton()
             {
                 Name = $"option{index}",
-                Content = content               
+                Content = content
             };
 
             if (optionsGrid.Children.Count % 4 == 0)

@@ -4,7 +4,7 @@ using Lib;
 
 namespace Core
 {
-    public class DefaultCore
+    public class DefaultPassingCore
     {
         public Test CurrentTest { get; protected set; }
         public List<Topic> AllTopics { get; protected set; }
@@ -14,7 +14,7 @@ namespace Core
         private int currentTopicIndex;
         private int currentTaskIndex;
 
-        public DefaultCore(string pathToTest)
+        public DefaultPassingCore(string pathToTest)
         {
             var loader = new SaveLoad();
             CurrentTest = loader.Load(pathToTest);

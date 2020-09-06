@@ -64,7 +64,7 @@ namespace ConsoleTest
 
             new SaveLoad().Save(test);
 
-            var core = new DefaultCore("Test.tmt");
+            var core = new DefaultPassingCore("Test.tmt");
 
             Console.WriteLine(core.CurrentTopic.Name + " -> " + core.CurrentTask.Question);
 

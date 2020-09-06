@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Lib.TaskTypes
 {
-    class MultipleChoice: Task
+    public class MultipleChoice: Task
     {
         public List<string> Options { get; protected set; }
         public List<int> RightAnswersIndexes { get; protected set; }

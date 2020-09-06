@@ -1,4 +1,5 @@
-﻿using Lib.TaskTypes;
+﻿using Core;
+using Lib.TaskTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using UI.Pages;
 
 namespace UI
 {
@@ -25,19 +27,16 @@ namespace UI
         {
             InitializeComponent();
 
-            var options = new List<string>()
+            var core = new DefaultPassingCore("Test.tmt");
+
+            var allTopics = new StringBuilder();
+
+            foreach (var topic in core.AllTopics)
             {
-                "lol",
-                "kek",
-                "[t[",
-                "kjk",
-            };
+                allTopics.Append(topic.Name + " ");
+            }
 
-            var task = new SingleChoice("lol?", options, 0, 5);
-
-            var page = new SingleChoicePage(task);
-
-            Content = page;
+            MessageBox.Show(allTopics.ToString());
         }
     }
 }
