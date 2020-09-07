@@ -20,59 +20,33 @@ namespace UI
     /// </summary>
     public partial class SingleChoicePage : Page
     {
+        public int ChosenOption { get; protected set; }
+        public bool IsOptionChosen { get; protected set; }
+        private SingleChoice task;
+
         public SingleChoicePage(SingleChoice task)
         {
             InitializeComponent();
 
-            BuildBasis();
+            this.task = task;
+
+            questionBlock.Text = task.Question;
 
             for (var optionNum = 0; optionNum < task.Options.Count; optionNum++)
             {
                 AddOption(optionNum, task.Options[optionNum]);
             }
-        }
-
-        private void BuildBasis()
-        {
-            var mainGrid = new Grid()
-            {
-                Name = "mainGrid"
-            };
-
-            for (var counter = 0; counter < 2; counter++)
-            {
-                mainGrid.RowDefinitions.Add(new RowDefinition());
-            }
-
-            var optionsGrid = new UniformGrid()
-            {
-                Name = "optionsGrid",
-                Columns = 4
-            };
-
-            Grid.SetRow(optionsGrid, 1);
-            mainGrid.Children.Add(optionsGrid);
-
-            Content = mainGrid;
-        }
+        }   
 
         private void AddOption(int index, string content)
         {
-            var optionsGrid = new UniformGrid();
-
-            foreach (var element in ((Grid)Content).Children)
-            {
-                if ((element is UniformGrid uniGrid) && (uniGrid.Name == "optionsGrid"))
-                {
-                    optionsGrid = uniGrid;
-                }
-            }
-
-            var button = new ToggleButton()
+            var button = new Button()
             {
                 Name = $"option{index}",
-                Content = content               
+                Content = content           
             };
+
+            button.Click += OptionButtonClick;
 
             if (optionsGrid.Children.Count % 4 == 0)
             {
@@ -80,6 +54,29 @@ namespace UI
             }
 
             optionsGrid.Children.Add(button);
+        }
+
+        private void OptionButtonClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var element in optionsGrid.Children)
+            {
+                var optionButton = element as Button;
+                optionButton.Background = SystemColors.ControlLightBrush;
+            }
+
+            IsOptionChosen = true;
+
+            var button = sender as Button;
+            ChosenOption = Convert.ToInt32(button.Name.Substring(button.Name.Length - 1));
+
+            button.Background = new SolidColorBrush(Colors.Red);
+        }
+
+        public Grid GetAsGrid()
+        {
+            var mainGrid = Content as Grid;
+            Content = null;
+            return mainGrid;
         }
     }
 }

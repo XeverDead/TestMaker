@@ -68,7 +68,7 @@ namespace ConsoleTest
 
             Console.WriteLine(core.CurrentTopic.Name + " -> " + core.CurrentTask.Question);
 
-            while (core.SetNewCurrentTask())
+            while (core.SetNextTaskToCurrent())
             {
                 Console.WriteLine(core.CurrentTopic.Name + " -> " + core.CurrentTask.Question);
             }

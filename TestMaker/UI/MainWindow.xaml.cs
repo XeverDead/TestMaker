@@ -2,6 +2,7 @@
 using Lib.TaskTypes;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,22 +25,48 @@ namespace UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DefaultPassingCore core;
         public MainWindow()
         { 
             InitializeComponent();
 
-            AddChild(new StartTestPage());
+            core = new DefaultPassingCore("Test.tmt");
 
-            var core = new DefaultPassingCore("Test.tmt");
+            mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
+        }
 
-            var allTopics = new StringBuilder();
-
-            foreach (var topic in core.AllTopics)
+        private void NextButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (core.SetNextTaskToCurrent())
             {
-                allTopics.Append(topic.Name + " ");
-            }
+                foreach (var element in mainPanel.Children)
+                {
+                    if (element is Grid optionsGrid)
+                    {
+                        mainPanel.Children.Remove(optionsGrid);
+                        break;
+                    }
+                }
 
-            MessageBox.Show(allTopics.ToString());
+                mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
+            }
+        }
+
+        private void PrevButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (core.SetPrevTaskToCurrent())
+            {
+                foreach (var element in mainPanel.Children)
+                {
+                    if (element is Grid optionsGrid)
+                    {
+                        mainPanel.Children.Remove(optionsGrid);
+                        break;
+                    }
+                }
+
+                mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
+            }
         }
     }
 }

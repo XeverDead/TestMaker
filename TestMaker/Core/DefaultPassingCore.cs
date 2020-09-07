@@ -63,7 +63,7 @@ namespace Core
             }
         }
 
-        public bool SetNewCurrentTask()
+        public bool SetNextTaskToCurrent()
         {
             var hasNextTask = false;
 
@@ -79,7 +79,7 @@ namespace Core
                     if (AllTopics[topicIndex].HasTasks)
                     {
                         CurrentTopic = AllTopics[topicIndex];
-                        CurrentTask = AllTopics[topicIndex].Tasks[0];
+                        CurrentTask = CurrentTopic.Tasks[0];
 
                         currentTaskIndex = 0;
                         currentTopicIndex = topicIndex;
@@ -91,6 +91,36 @@ namespace Core
             }
 
             return hasNextTask;
+        }
+
+        public bool SetPrevTaskToCurrent()
+        {
+            var hasPrevTask = false;
+
+            if (currentTaskIndex > 0)
+            {
+                CurrentTask = CurrentTopic.Tasks[--currentTaskIndex];
+                hasPrevTask = true;
+            }
+            else
+            {
+                for (var topicIndex = currentTopicIndex - 1; topicIndex >= 0; topicIndex--)
+                {
+                    if (AllTopics[topicIndex].HasTasks)
+                    {
+                        CurrentTopic = AllTopics[topicIndex];
+                        CurrentTask = CurrentTopic.Tasks[^1];
+
+                        currentTopicIndex = topicIndex;
+                        currentTaskIndex = CurrentTopic.Tasks.Count - 1;
+
+                        hasPrevTask = true;
+                        break;
+                    }
+                }
+            }
+
+            return hasPrevTask;
         }
     }
 }

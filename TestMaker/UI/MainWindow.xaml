@@ -6,4 +6,8 @@
         xmlns:local="clr-namespace:UI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <DockPanel x:Name="mainPanel">
+        <Button x:Name="nextButton" DockPanel.Dock="Right" Content="->" Click="NextButtonClick"></Button>
+        <Button x:Name="prevButton" DockPanel.Dock="Left" Content="&lt;-" Click="PrevButtonClick"></Button>
+    </DockPanel>
 </Window>

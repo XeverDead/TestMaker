@@ -24,50 +24,14 @@ namespace UI.Pages
         {
             InitializeComponent();
 
-            BuildBasis();
-
             for (var optionNum = 0; optionNum < task.Options.Count; optionNum++)
             {
                 AddOption(optionNum, task.Options[optionNum]);
             }
         }
 
-        private void BuildBasis()
-        {
-            var mainGrid = new Grid()
-            {
-                Name = "mainGrid"
-            };
-
-            for (var counter = 0; counter < 2; counter++)
-            {
-                mainGrid.RowDefinitions.Add(new RowDefinition());
-            }
-
-            var optionsGrid = new UniformGrid()
-            {
-                Name = "optionsGrid",
-                Columns = 4
-            };
-
-            Grid.SetRow(optionsGrid, 1);
-            mainGrid.Children.Add(optionsGrid);
-
-            Content = mainGrid;
-        }
-
         private void AddOption(int index, string content)
-        {
-            var optionsGrid = new UniformGrid();
-
-            foreach (var element in ((Grid)Content).Children)
-            {
-                if ((element is UniformGrid uniGrid) && (uniGrid.Name == "optionsGrid"))
-                {
-                    optionsGrid = uniGrid;
-                }
-            }
-
+        {           
             var button = new ToggleButton()
             {
                 Name = $"option{index}",
@@ -80,6 +44,13 @@ namespace UI.Pages
             }
 
             optionsGrid.Children.Add(button);
+        }
+
+        public Grid GetAsGrid()
+        {
+            var mainGrid = Content as Grid;
+            Content = null;
+            return mainGrid;
         }
     }
 }
