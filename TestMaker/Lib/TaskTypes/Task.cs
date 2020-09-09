@@ -7,9 +7,9 @@ namespace Lib
         public string Question { get; protected set; }
         public int Time { get; protected set; }
         public bool IsTimeLimited { get; protected set; }
-        public int Mark { get; protected set; }
+        public double Mark { get; protected set; }
 
-        public Task(string question, List<string> options, int mark)
+        public Task(string question, List<string> options, double mark)
         {
             Question = question;
             Mark = mark;
@@ -17,7 +17,7 @@ namespace Lib
             IsTimeLimited = false;
         }
 
-        public Task(int time, string question, List<string> options, int mark)
+        public Task(int time, string question, List<string> options, double mark)
             : this(question, options, mark)
         {
             if (time > 0)

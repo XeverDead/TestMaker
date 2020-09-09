@@ -8,7 +8,7 @@ namespace Lib.TaskTypes
         public List<string> Options { get; protected set; }
         public List<int> RightAnswersIndexes { get; protected set; }
 
-        public MultipleChoice(string question, List<string> options, List<int> rightAnswersIndexes, int mark)
+        public MultipleChoice(string question, List<string> options, List<int> rightAnswersIndexes, double mark)
             : base(question, options, mark)
         {
             if (options is null)
@@ -31,7 +31,7 @@ namespace Lib.TaskTypes
         }
 
         [JsonConstructor]
-        public MultipleChoice(int time, string question, List<string> options, List<int> rightAnswersIndexes, int mark)
+        public MultipleChoice(int time, string question, List<string> options, List<int> rightAnswersIndexes, double mark)
             : base(time, question, options, mark) 
         {
             if (options is null)

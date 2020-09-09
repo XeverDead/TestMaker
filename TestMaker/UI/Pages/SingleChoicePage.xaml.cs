@@ -20,7 +20,7 @@ namespace UI
     /// </summary>
     public partial class SingleChoicePage : Page
     {
-        public int ChosenOption { get; protected set; }
+        public int ChosenOptionIndex { get; protected set; }
         public bool IsOptionChosen { get; protected set; }
         private SingleChoice task;
 
@@ -67,7 +67,7 @@ namespace UI
             IsOptionChosen = true;
 
             var button = sender as Button;
-            ChosenOption = Convert.ToInt32(button.Name.Substring(button.Name.Length - 1));
+            ChosenOptionIndex = Convert.ToInt32(button.Name.Substring(button.Name.Length - 1));
 
             button.Background = new SolidColorBrush(Colors.Red);
         }

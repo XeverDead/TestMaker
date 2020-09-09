@@ -20,6 +20,8 @@ namespace UI.Pages
     /// </summary>
     public partial class MultipleChoicePage : Page
     {
+        public List<int> ChosenOptionsIndexes { get; protected set; }
+
         public MultipleChoicePage(MultipleChoice task)
         {
             InitializeComponent();
@@ -37,6 +39,8 @@ namespace UI.Pages
                 Name = $"option{index}",
                 Content = content
             };
+            button.Checked += OptionButtonChecked;
+            button.Unchecked += OptionButtonUnchecked;
 
             if (optionsGrid.Children.Count % 4 == 0)
             {
@@ -44,6 +48,24 @@ namespace UI.Pages
             }
 
             optionsGrid.Children.Add(button);
+        }
+
+        private void OptionButtonUnchecked(object sender, RoutedEventArgs e)
+        {
+            var optionButton = sender as ToggleButton;
+            optionButton.Background = SystemColors.ControlLightBrush;
+
+            var buttonIndex = Convert.ToInt32(optionButton.Name.Substring(optionButton.Name.Length - 1));
+            ChosenOptionsIndexes.Remove(buttonIndex);
+        }
+
+        private void OptionButtonChecked(object sender, RoutedEventArgs e)
+        {
+            var optionButton = sender as ToggleButton;
+            optionButton.Background = SystemColors.ControlLightBrush;
+
+            var buttonIndex = Convert.ToInt32(optionButton.Name.Substring(optionButton.Name.Length - 1));
+            ChosenOptionsIndexes.Add(buttonIndex);
         }
 
         public Grid GetAsGrid()
