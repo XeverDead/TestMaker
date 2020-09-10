@@ -10,14 +10,15 @@ namespace Core
         public List<Topic> AllTopics { get; protected set; }
         public Topic CurrentTopic { get; protected set; }
         public Task CurrentTask { get; protected set; }
+        public ISaveLoad SaveLoad { get; protected set; }
 
-        private int currentTopicIndex;
-        private int currentTaskIndex;
+        protected int currentTopicIndex;
+        protected int currentTaskIndex;
 
-        public DefaultPassingCore(string pathToTest)
+        public DefaultPassingCore(string pathToTest, ISaveLoad saveLoad)
         {
-            var loader = new SaveLoad();
-            CurrentTest = loader.Load(pathToTest);
+            SaveLoad = saveLoad;
+            CurrentTest = SaveLoad.Load(pathToTest);
 
             AllTopics = new List<Topic>();
             GetAllTopics();

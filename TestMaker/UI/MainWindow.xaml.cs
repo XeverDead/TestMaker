@@ -1,4 +1,5 @@
 ﻿using Core;
+using Lib;
 using Lib.TaskTypes;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace UI
         { 
             InitializeComponent();
 
-            core = new DefaultPassingCore("Test.tmt");
+            core = new DefaultPassingCore("Test.tmt", new SaveLoad());
 
             mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
         }

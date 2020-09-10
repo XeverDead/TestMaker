@@ -5,38 +5,38 @@ namespace Lib.TaskTypes
 {
     public class SingleChoice : Task
     {
-        public List<string> Options { get; protected set; }
-        public int RightAnswerIndex { get; protected set; }
+        public List<string> Options { get; set; }
+        public int RightAnswerIndex { get; set; }
 
-        public SingleChoice(string question, List<string> options, int rightAnswerIndex, double mark)
-            : base(question, options, mark)
-        {
-            if (options is null)
-            {
-                Options = new List<string>();
-            }
-            else
-            {
-                Options = new List<string>(options);
-            }
+        //public SingleChoice(string question, List<string> options, int rightAnswerIndex, double mark)
+        //    : base(question, options, mark)
+        //{
+        //    if (options is null)
+        //    {
+        //        Options = new List<string>();
+        //    }
+        //    else
+        //    {
+        //        Options = new List<string>(options);
+        //    }
 
-            RightAnswerIndex = rightAnswerIndex;
-        }
+        //    RightAnswerIndex = rightAnswerIndex;
+        //}
 
-        [JsonConstructor]
-        public SingleChoice(int time, string question, List<string> options, int rightAnswerIndex, double mark)
-            : base(time, question, options, mark) 
-        {
-            if (options is null)
-            {
-                Options = new List<string>();
-            }
-            else
-            {
-                Options = new List<string>(options);
-            }
+        //[JsonConstructor]
+        //public SingleChoice(int time, string question, List<string> options, int rightAnswerIndex, double mark)
+        //    : base(time, question, options, mark) 
+        //{
+        //    if (options is null)
+        //    {
+        //        Options = new List<string>();
+        //    }
+        //    else
+        //    {
+        //        Options = new List<string>(options);
+        //    }
 
-            RightAnswerIndex = rightAnswerIndex;
-        }
+        //    RightAnswerIndex = rightAnswerIndex;
+        //}
     }
 }

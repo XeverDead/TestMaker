@@ -20,7 +20,13 @@ namespace ConsoleTest
                 "ne lol"
             };
             var index1 = 0;
-            var task1 = new SingleChoice(question1, options1, index1, index1);
+            var task1 = new SingleChoice
+            {
+                Question = question1,
+                Options = options1,
+                RightAnswerIndex = index1,
+                Mark = index1,
+            };
 
             var question2 = "second";
             var options2 = new List<string>
@@ -29,7 +35,13 @@ namespace ConsoleTest
                 "kek"
             };
             var index2 = 1;
-            var task2 = new SingleChoice(question2, options2, index2, index2);
+            var task2 = new SingleChoice
+            {
+                Question = question2,
+                Options = options2,
+                RightAnswerIndex = index2,
+                Mark = index2,
+            };
 
             var tasks = new List<Lib.Task>()
             {
@@ -64,7 +76,7 @@ namespace ConsoleTest
 
             new SaveLoad().Save(test);
 
-            var core = new DefaultPassingCore("Test.tmt");
+            var core = new DefaultPassingCore("Test.tmt", new SaveLoad());
 
             Console.WriteLine(core.CurrentTopic.Name + " -> " + core.CurrentTask.Question);
 
