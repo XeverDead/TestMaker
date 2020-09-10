@@ -13,7 +13,7 @@ namespace Lib
 
         public void Save(Test test)
         {
-            using (var writer = new StreamWriter($"D:\\{test.Name}.tmt"))
+            using (var writer = new StreamWriter($"{test.Name}.tmt"))
             {
                 writer.WriteLine(JsonConvert.SerializeObject(test, serializerSettings));
             }
@@ -23,7 +23,7 @@ namespace Lib
         {
             Test test;
 
-            using (var reader = new StreamReader($"D:\\{path}"))
+            using (var reader = new StreamReader($"{path}"))
             {
                 var text = reader.ReadToEnd();
                 test = JsonConvert.DeserializeObject<Test>(text, serializerSettings);

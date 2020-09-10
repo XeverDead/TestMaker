@@ -12,7 +12,7 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock x:Name="questionBlock" Grid.Row="0"></TextBlock>
+        <TextBlock x:Name="questionBlock" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
         <UniformGrid x:Name="optionsGrid" Grid.Row="1" Columns="4">
 
         </UniformGrid>
