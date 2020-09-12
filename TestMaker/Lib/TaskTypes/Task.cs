@@ -6,7 +6,7 @@ namespace Lib
     {
         public string Question { get; set; }
         public int Time { get; set; }
-        public bool IsTimeLimited { get; set; }
+        public bool IsTimeLimited { get => Time > 0; }
         public double Mark { get; set; }
 
         //public Task(string question, List<string> options, double mark)

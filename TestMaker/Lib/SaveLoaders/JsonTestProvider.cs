@@ -3,8 +3,15 @@ using System.IO;
 
 namespace Lib
 {
-    public class SaveLoad: ISaveLoad
+    public class JsonTestProvider: ITestProvider
     {
+        private readonly string path;
+
+        public JsonTestProvider(string path)
+        {
+            this.path = path;
+        }
+
         private JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.Auto,
@@ -19,7 +26,7 @@ namespace Lib
             }
         }
 
-        public Test Load(string path)
+        public Test Load()
         {
             Test test;
 

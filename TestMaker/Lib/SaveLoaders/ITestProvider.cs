@@ -1,9 +1,9 @@
 ﻿namespace Lib
 {
-    public interface ISaveLoad
+    public interface ITestProvider
     {
         void Save(Test test);
 
-        Test Load(string path);
+        Test Load();
     }
 }

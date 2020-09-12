@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Lib;
 using Lib.TaskTypes;
 
 namespace UI.Pages
@@ -18,13 +19,19 @@ namespace UI.Pages
     /// <summary>
     /// Логика взаимодействия для MultipleChoicePage.xaml
     /// </summary>
-    public partial class MultipleChoicePage : Page
+    public partial class MultipleChoicePage : Page, ITaskPage
     {
-        public List<int> ChosenOptionsIndexes { get; protected set; }
+        public dynamic Answer { get; protected set; }
+        public bool IsAnswerChosen { get; protected set; }
+        public Task Task { get; protected set; }
 
         public MultipleChoicePage(MultipleChoice task)
         {
             InitializeComponent();
+
+            Task = task;
+
+            questionBlock.Text = task.Question;
 
             for (var optionNum = 0; optionNum < task.Options.Count; optionNum++)
             {
@@ -56,7 +63,12 @@ namespace UI.Pages
             optionButton.Background = SystemColors.ControlLightBrush;
 
             var buttonIndex = Convert.ToInt32(optionButton.Name.Substring(optionButton.Name.Length - 1));
-            ChosenOptionsIndexes.Remove(buttonIndex);
+            Answer.Remove(buttonIndex);
+
+            if (Answer.Count == 0)
+            {
+                IsAnswerChosen = false;
+            }
         }
 
         private void OptionButtonChecked(object sender, RoutedEventArgs e)
@@ -65,14 +77,9 @@ namespace UI.Pages
             optionButton.Background = SystemColors.ControlLightBrush;
 
             var buttonIndex = Convert.ToInt32(optionButton.Name.Substring(optionButton.Name.Length - 1));
-            ChosenOptionsIndexes.Add(buttonIndex);
-        }
+            Answer.Add(buttonIndex);
 
-        public Grid GetAsGrid()
-        {
-            var mainGrid = Content as Grid;
-            Content = null;
-            return mainGrid;
+            IsAnswerChosen = true;
         }
     }
 }

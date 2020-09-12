@@ -5,21 +5,21 @@ namespace Lib.ResultTypes
     public class TestResult
     {
         public Test Test { get; protected set; }
-        public List<TaskResult<Task>> TaskResults { get; protected set; }
+        public Dictionary<Task, TaskResult> TaskResults { get; protected set; }
         public double Mark { get; protected set; }
 
-        public TestResult(Test test, List<TaskResult<Task>> taskResults, double mark)
+        public TestResult(Test test, Dictionary<Task, TaskResult> taskResults, double mark)
         {
             Test = test;
             Mark = mark;
 
             if (taskResults == null)
             {
-                TaskResults = new List<TaskResult<Task>>();
+                TaskResults = new Dictionary<Task, TaskResult>();
             }
             else
             {
-                TaskResults = new List<TaskResult<Task>>(taskResults);
+                TaskResults = new Dictionary<Task, TaskResult>(taskResults);
             }
         }
     }

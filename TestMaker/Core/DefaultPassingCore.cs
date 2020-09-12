@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Lib;
+using Lib.ResultTypes;
+using Lib.TaskTypes;
+using System;
 using System.Collections.Generic;
-using Lib;
 
 namespace Core
 {
@@ -10,18 +12,24 @@ namespace Core
         public List<Topic> AllTopics { get; protected set; }
         public Topic CurrentTopic { get; protected set; }
         public Task CurrentTask { get; protected set; }
-        public ISaveLoad SaveLoad { get; protected set; }
+
+        protected ITestProvider testProvider;
+        protected Dictionary<Task, TaskResult> taskResults;
+        protected TestResult testResult;
 
         protected int currentTopicIndex;
         protected int currentTaskIndex;
 
-        public DefaultPassingCore(string pathToTest, ISaveLoad saveLoad)
+        public DefaultPassingCore(ITestProvider testProvider)
         {
-            SaveLoad = saveLoad;
-            CurrentTest = SaveLoad.Load(pathToTest);
+            this.testProvider = testProvider;
+            CurrentTest = testProvider.Load();
 
             AllTopics = new List<Topic>();
             GetAllTopics();
+
+            taskResults = new Dictionary<Task, TaskResult>();
+            AddTasksToResults();
 
             for (var topicIndex = 0; topicIndex < AllTopics.Count; topicIndex++) 
             {
@@ -47,6 +55,20 @@ namespace Core
                 if (topic.HasSubTopics)
                 {
                     GetAllSubTopics(topic);
+                }
+            }
+        }
+
+        private void AddTasksToResults()
+        {
+            foreach (var topic in AllTopics)
+            {
+                if (topic.HasTasks)
+                {
+                    foreach (var task in topic.Tasks)
+                    {
+                        taskResults[task] = null;
+                    }
                 }
             }
         }
@@ -83,7 +105,7 @@ namespace Core
                         CurrentTask = CurrentTopic.Tasks[0];
 
                         currentTaskIndex = 0;
-                        currentTopicIndex = topicIndex;
+                        currentTopicIndex = topicIndex;    
 
                         hasNextTask = true;
                         break;
@@ -122,6 +144,78 @@ namespace Core
             }
 
             return hasPrevTask;
+        }
+
+        public void SetResult(Task task, dynamic answer)
+        {
+            taskResults[task] = new TaskResult(CurrentTask, answer);
+        }
+
+        public double CheckTest()
+        {
+            var testMark = 0.0;
+
+            foreach (var task in taskResults.Keys)
+            {
+                if (taskResults[task] is null)
+                {
+                    continue;
+                }
+
+                if (task is SingleChoice scTask)
+                {
+                    testMark += GetSingleChoiceMark(scTask, taskResults[task]);
+                }
+                else if (task is MultipleChoice mcTask)
+                {
+                    testMark += GetMultipleChoiceMark(mcTask, taskResults[task]);
+                }
+            }
+
+            testResult = new TestResult(CurrentTest, taskResults, testMark);
+
+            return testMark;
+        }
+
+        private double GetSingleChoiceMark(SingleChoice task, TaskResult taskResult)
+        {
+            var answerIndex = (int)taskResult.Answer;
+            var mark = 0.0;
+
+            if (answerIndex == task.RightAnswerIndex)
+            {
+                mark = task.Mark;
+            }
+
+            return mark;
+        }
+
+        private double GetMultipleChoiceMark(MultipleChoice task, TaskResult taskResult)
+        {
+            var answerIndexes = (List<int>)taskResult.Answer;
+            var mark = 0.0;
+
+            var additionForRightAnswer = task.Mark / task.RightAnswersIndexes.Count;
+            var subtractionForWrongAnswer = task.Mark / (task.Options.Count - task.RightAnswersIndexes.Count);
+
+            foreach (var rightIndex in task.RightAnswersIndexes)
+            {
+                if (answerIndexes.Contains(rightIndex))
+                {
+                    mark += additionForRightAnswer;
+                }
+                else
+                {
+                    mark -= subtractionForWrongAnswer;
+                }
+            }
+
+            if (mark < 0)
+            {
+                mark = 0;
+            }
+
+            return mark;
         }
     }
 }

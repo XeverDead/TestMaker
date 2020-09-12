@@ -1,5 +1,6 @@
 ﻿using Core;
 using Lib;
+using Lib.ResultTypes;
 using Lib.TaskTypes;
 using System;
 using System.Collections.Generic;
@@ -26,47 +27,72 @@ namespace UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DefaultPassingCore core;
+        private readonly DefaultPassingCore core;
+        private ITaskPage currentPage;
         public MainWindow()
         { 
             InitializeComponent();
 
-            core = new DefaultPassingCore("Test.tmt", new SaveLoad());
+            core = new DefaultPassingCore(new JsonTestProvider("Test.tmt"));
 
-            mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
+            SetNewPage();
         }
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
         {
+            SaveAnswer();
+
             if (core.SetNextTaskToCurrent())
             {
-                foreach (var element in mainPanel.Children)
-                {
-                    if (element is Grid optionsGrid)
-                    {
-                        mainPanel.Children.Remove(optionsGrid);
-                        break;
-                    }
-                }
-
-                mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
+                SetNewPage();
+            }
+            else
+            {
+                MessageBox.Show(core.CheckTest().ToString());
             }
         }
 
         private void PrevButtonClick(object sender, RoutedEventArgs e)
         {
+            SaveAnswer();
+
             if (core.SetPrevTaskToCurrent())
             {
-                foreach (var element in mainPanel.Children)
-                {
-                    if (element is Grid optionsGrid)
-                    {
-                        mainPanel.Children.Remove(optionsGrid);
-                        break;
-                    }
-                }
+                SetNewPage();
+            }
+        }
 
-                mainPanel.Children.Add(new SingleChoicePage(core.CurrentTask as SingleChoice).GetAsGrid());
+        private void SetNewPage()
+        {
+            foreach (var element in mainPanel.Children)
+            {
+                if (element is Grid taskGrid)
+                {                   
+                    mainPanel.Children.Remove(taskGrid);
+                    break;
+                }
+            }
+
+            if (core.CurrentTask is SingleChoice)
+            {
+                currentPage = new SingleChoicePage(core.CurrentTask as SingleChoice);
+            }
+            else if (core.CurrentTask is MultipleChoice)
+            {
+                currentPage = new MultipleChoicePage(core.CurrentTask as MultipleChoice);
+            }
+
+            var pageGrid = currentPage.Content as Grid;
+            currentPage.Content = null;
+
+            mainPanel.Children.Add(pageGrid);
+        }
+
+        private void SaveAnswer()
+        {
+            if (currentPage.IsAnswerChosen)
+            {
+                core.SetResult(currentPage.Task, currentPage.Answer);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Lib.TaskTypes;
+﻿using Lib;
+using Lib.TaskTypes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,23 +13,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using UI.Pages;
 
 namespace UI
 {
     /// <summary>
     /// Логика взаимодействия для SingleChoicePage.xaml
     /// </summary>
-    public partial class SingleChoicePage : Page
+    public partial class SingleChoicePage : Page, ITaskPage
     {
-        public int ChosenOptionIndex { get; protected set; }
-        public bool IsOptionChosen { get; protected set; }
-        private SingleChoice task;
+        public dynamic Answer { get; protected set; }
+        public bool IsAnswerChosen { get; protected set; }
+        public Task Task { get; protected set; }
 
         public SingleChoicePage(SingleChoice task)
         {
             InitializeComponent();
 
-            this.task = task;
+            Task = task;
 
             questionBlock.Text = task.Question;
 
@@ -36,7 +39,19 @@ namespace UI
             {
                 AddOption(optionNum, task.Options[optionNum]);
             }
-        }   
+        }
+
+        public SingleChoicePage(SingleChoice task, int chosenButtonIndex)
+            : this(task)
+        {
+            for (var index = 0; index < optionsGrid.Children.Count; index++)
+            {
+                if (optionsGrid.Children[index] is Button button && button.Name == $"option{chosenButtonIndex}")
+                {
+                    button.Background = new SolidColorBrush(Colors.Red);
+                }
+            }
+        }
 
         private void AddOption(int index, string content)
         {
@@ -64,19 +79,12 @@ namespace UI
                 optionButton.Background = SystemColors.ControlLightBrush;
             }
 
-            IsOptionChosen = true;
+            IsAnswerChosen = true;
 
             var button = sender as Button;
-            ChosenOptionIndex = Convert.ToInt32(button.Name.Substring(button.Name.Length - 1));
+            Answer = Convert.ToInt32(button.Name.Substring(button.Name.Length - 1));
 
             button.Background = new SolidColorBrush(Colors.Red);
-        }
-
-        public Grid GetAsGrid()
-        {
-            var mainGrid = Content as Grid;
-            Content = null;
-            return mainGrid;
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿namespace Lib.ResultTypes
 {
-    public abstract class TaskResult<TTask> where TTask: Task
+    public class TaskResult
     {
-        public TTask Task { get; protected set; }
+        public Task Task { get; protected set; }
         public double Mark { get; protected set; }
-        public dynamic AnswerIndex { get; protected set; }
+        public dynamic Answer { get; protected set; }
 
-        public TaskResult(TTask task, dynamic answerIndex, double mark)
+        public TaskResult(Task task, dynamic answer)
         {
             Task = task;
-            Mark = mark;
-            AnswerIndex = answerIndex;
+            Answer = answer;
         }
     }
 }
