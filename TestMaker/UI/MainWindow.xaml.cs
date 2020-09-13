@@ -33,7 +33,9 @@ namespace UI
         { 
             InitializeComponent();
 
-            core = new DefaultPassingCore(new JsonTestProvider("Test.tmt"));
+            core = new DefaultPassingCore(new JsonDataProvider<Test>("Test"));
+
+            core.StudentName = GetStudentName();
 
             SetNewPage();
         }
@@ -48,7 +50,7 @@ namespace UI
             }
             else
             {
-                MessageBox.Show(core.CheckTest().ToString());
+                AskToMoveToResultScreen();
             }
         }
 
@@ -75,11 +77,25 @@ namespace UI
 
             if (core.CurrentTask is SingleChoice)
             {
-                currentPage = new SingleChoicePage(core.CurrentTask as SingleChoice);
+                if (core.WasAnswerGiven(out dynamic answer))
+                {
+                    currentPage = new SingleChoicePage(core.CurrentTask as SingleChoice, answer);
+                }
+                else
+                {
+                    currentPage = new SingleChoicePage(core.CurrentTask as SingleChoice);
+                }
             }
             else if (core.CurrentTask is MultipleChoice)
             {
-                currentPage = new MultipleChoicePage(core.CurrentTask as MultipleChoice);
+                if (core.WasAnswerGiven(out dynamic answer))
+                {
+                    currentPage = new MultipleChoicePage(core.CurrentTask as MultipleChoice, answer);
+                }
+                else
+                {
+                    currentPage = new MultipleChoicePage(core.CurrentTask as MultipleChoice, answer);
+                }
             }
 
             var pageGrid = currentPage.Content as Grid;
@@ -94,6 +110,24 @@ namespace UI
             {
                 core.SetResult(currentPage.Task, currentPage.Answer);
             }
+        }
+
+        private void AskToMoveToResultScreen()
+        {
+            var result = MessageBox.Show("Would you like to end this try?", "Ending", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                var mark = core.GetTestMark(out double maxMark);
+            }
+        }
+
+        private string GetStudentName()
+        {
+            var enterNameWindow = new EnterNameWindow();
+
+            enterNameWindow.ShowDialog();
+            return enterNameWindow.EnteredName;
         }
     }
 }

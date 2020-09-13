@@ -5,5 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UI.DialogWindows"
         mc:Ignorable="d"
-        Title="EnterNameWindow" Height="450" Width="800">
+        Title="Enter your name" Height="200" Width="400">
+    <UniformGrid x:Name="mainGrid" Rows="2">
+        <TextBox x:Name="nameBox"></TextBox>
+        <Button x:Name="okButton" Content="OK" Click="OkButtonClick"></Button>
+    </UniformGrid>
 </Window>

@@ -39,6 +39,24 @@ namespace UI.Pages
             }
         }
 
+        public MultipleChoicePage(MultipleChoice task, List<int> chosenButtonIndexes)
+            : this(task)
+        {
+            for (var index = 0; index < optionsGrid.Children.Count; index++)
+            {
+                if (optionsGrid.Children[index] is Button button)
+                {
+                    foreach (var optionIndex in chosenButtonIndexes)
+                    {
+                        if (button.Name == $"option{optionIndex}")
+                        {
+                            button.Background = new SolidColorBrush(Colors.Red);
+                        }
+                    }
+                }
+            }
+        }
+
         private void AddOption(int index, string content)
         {           
             var button = new ToggleButton()

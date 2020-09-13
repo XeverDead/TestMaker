@@ -13,14 +13,16 @@ namespace Core
         public Topic CurrentTopic { get; protected set; }
         public Task CurrentTask { get; protected set; }
 
-        protected ITestProvider testProvider;
+        public string StudentName { get; set; }
+
+        protected IDataProvider<Test> testProvider;
         protected Dictionary<Task, TaskResult> taskResults;
         protected TestResult testResult;
 
         protected int currentTopicIndex;
         protected int currentTaskIndex;
 
-        public DefaultPassingCore(ITestProvider testProvider)
+        public DefaultPassingCore(IDataProvider<Test> testProvider)
         {
             this.testProvider = testProvider;
             CurrentTest = testProvider.Load();
@@ -151,12 +153,15 @@ namespace Core
             taskResults[task] = new TaskResult(CurrentTask, answer);
         }
 
-        public double CheckTest()
+        public double GetTestMark(out double maxMark)
         {
             var testMark = 0.0;
+            maxMark = 0.0;
 
             foreach (var task in taskResults.Keys)
             {
+                maxMark += task.Mark;
+
                 if (taskResults[task] is null)
                 {
                     continue;
@@ -173,6 +178,11 @@ namespace Core
             }
 
             testResult = new TestResult(CurrentTest, taskResults, testMark);
+            if (StudentName == null)
+            {
+                StudentName = "Unknown";
+            }
+            testResult.StudentName = StudentName;
 
             return testMark;
         }
@@ -216,6 +226,27 @@ namespace Core
             }
 
             return mark;
+        }
+
+        public void SaveResult(IDataProvider<TestResult> resultProvider)
+        {
+            if (testResult != null)
+            {
+                resultProvider.Save(testResult);
+            }
+        }
+
+        public bool WasAnswerGiven(out dynamic answer)
+        {
+            answer = null;
+
+            if (taskResults[CurrentTask] != null) 
+            {
+                answer = taskResults[CurrentTask].Answer;
+                return true;
+            }
+
+            return false;
         }
     }
 }
