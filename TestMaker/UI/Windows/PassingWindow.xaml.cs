@@ -25,7 +25,7 @@ namespace UI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class PassingWindow : Window
     {
         private readonly DefaultPassingCore core;
         private Dictionary<Lib.Task, Topic> tasksAndTopics;
@@ -37,8 +37,8 @@ namespace UI
         private List<Lib.Task> tasks;
         private int currentTaskIndex;
 
-        private Dictionary<Lib.Task, TaskResult> answers;
-        public MainWindow()
+        private List<TaskResult> results;
+        public PassingWindow()
         { 
             InitializeComponent();
 
@@ -50,10 +50,10 @@ namespace UI
             tasks = new List<Lib.Task>(tasksAndTopics.Keys);
             currentTaskIndex = 0;
 
-            answers = new Dictionary<Lib.Task, TaskResult>();
+            results = new List<TaskResult>();
             foreach (var task in tasks)
             {
-                answers.Add(task, null);
+                results.Add(new TaskResult(task, null));
             }
 
             SetNewPage();
@@ -99,9 +99,9 @@ namespace UI
 
             if (tasks[currentTaskIndex] is SingleChoice scTask)
             {
-                if (answers[scTask] != null)
+                if (results[currentTaskIndex].Answer != null)
                 {
-                    currentPage = new SingleChoicePage(scTask, answers[scTask].Answer);
+                    currentPage = new SingleChoicePage(scTask, results[currentTaskIndex].Answer);
                 }
                 else
                 {
@@ -110,9 +110,9 @@ namespace UI
             }
             else if (tasks[currentTaskIndex] is MultipleChoice mcTask)
             {
-                if (answers[mcTask] != null)
+                if (results[currentTaskIndex].Answer != null)
                 {
-                    currentPage = new MultipleChoicePage(mcTask, answers[mcTask].Answer);
+                    currentPage = new MultipleChoicePage(mcTask, results[currentTaskIndex].Answer);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace UI
         {
             if (currentPage.IsAnswerChosen)
             {
-                answers[tasks[currentTaskIndex]] = new TaskResult(tasks[currentTaskIndex], currentPage.Answer);
+                results[currentTaskIndex].Answer = currentPage.Answer;
             }
         }
     
@@ -140,11 +140,11 @@ namespace UI
 
             if (result == MessageBoxResult.Yes)
             {
-                var mark = core.CountTestMark(ref answers, out double maxMark);
+                var mark = core.CountTestMark(ref results, out double maxMark);
 
                 var marks = new StringBuilder();
 
-                foreach (var taskResult in answers.Values)
+                foreach (var taskResult in results)
                 {
                     marks.Append(taskResult.Mark + " ");
                 }

@@ -59,25 +59,34 @@ namespace Core
             return tasksAndTopics;
         }
 
-        public double CountTestMark(ref Dictionary<Task, TaskResult> answers, out double maxMark)
+        public double CountTestMark(ref List<TaskResult> results, out double maxMark)
         {
             var mark = 0.0;
             maxMark = 0.0;
 
-            foreach (var pair in answers)
+            foreach (var result in results)
             {
-                maxMark += pair.Key.Mark;
+                maxMark += result.Task.Mark;
 
-                if (pair.Key is SingleChoice scTask)
+                if (result.Answer == null) 
                 {
-                    var taskMark = CountSingleChoiceMark(scTask, pair.Value.Answer);
+                    result.Mark = 0;
+                    continue;
+                }
+
+                if (result.Task is SingleChoice scTask)
+                {
+                    var taskMark = CountSingleChoiceMark(scTask, result.Answer);
 
                     mark += taskMark;
-                    answers[pair.Key].Mark = taskMark;
+                    result.Mark = taskMark;
                 }
-                else if (pair.Key is MultipleChoice mcTask)
+                else if (result.Task is MultipleChoice mcTask)
                 {
-                    mark += CountMultipleChoiceMark(mcTask, pair.Value.Answer);
+                    var taskMark = CountMultipleChoiceMark(mcTask, result.Answer);
+
+                    mark += taskMark;
+                    result.Mark = taskMark;
                 }
             }
 
