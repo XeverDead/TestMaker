@@ -8,201 +8,94 @@ namespace Core
 {
     public class DefaultPassingCore
     {
-        public Test CurrentTest { get; protected set; }
-        public List<Topic> AllTopics { get; protected set; }
-        public Topic CurrentTopic { get; protected set; }
-        public Task CurrentTask { get; protected set; }
+        private Test test;
 
-        public string StudentName { get; set; }
-
-        protected IDataProvider<Test> testProvider;
-        protected Dictionary<Task, TaskResult> taskResults;
-        protected TestResult testResult;
-
-        protected int currentTopicIndex;
-        protected int currentTaskIndex;
-
-        public DefaultPassingCore(IDataProvider<Test> testProvider)
+        public DefaultPassingCore(IDataProvider<Test> taskProvider)
         {
-            this.testProvider = testProvider;
-            CurrentTest = testProvider.Load();
-
-            AllTopics = new List<Topic>();
-            GetAllTopics();
-
-            taskResults = new Dictionary<Task, TaskResult>();
-            AddTasksToResults();
-
-            for (var topicIndex = 0; topicIndex < AllTopics.Count; topicIndex++) 
-            {
-                if (AllTopics[topicIndex].HasTasks)
-                {
-                    CurrentTopic = AllTopics[topicIndex];
-                    CurrentTask = AllTopics[topicIndex].Tasks[0];
-
-                    currentTaskIndex = 0;
-                    currentTopicIndex = topicIndex;
-
-                    break;
-                }
-            }
+            test = taskProvider.Load();
         }
 
-        private void GetAllTopics()
+        public Dictionary<Task, Topic> GetTest()
         {
-            foreach (var topic in CurrentTest.Topics)
-            {
-                AllTopics.Add(topic);
+            var tasksAndTopics = new Dictionary<Task, Topic>();
 
-                if (topic.HasSubTopics)
+            foreach (var topic in test.Topics)
+            {
+                foreach (var pair in GetTasksFromTopic(topic))
                 {
-                    GetAllSubTopics(topic);
+                    tasksAndTopics.Add(pair.Key, pair.Value);
                 }
             }
+
+            return tasksAndTopics;
         }
 
-        private void AddTasksToResults()
+        private Dictionary<Task, Topic> GetTasksFromTopic(Topic topic)
         {
-            foreach (var topic in AllTopics)
+            var tasksAndTopics = new Dictionary<Task, Topic>();
+
+            if (topic.HasSubTopics)
             {
-                if (topic.HasTasks)
+                foreach (var subTopic in topic.SubTopics)
                 {
-                    foreach (var task in topic.Tasks)
+                    if (subTopic.HasTasks)
                     {
-                        taskResults[task] = null;
+                        foreach (var task in subTopic.Tasks)
+                        {
+                            tasksAndTopics.Add(task, subTopic);
+                        }
                     }
-                }
-            }
-        }
 
-        private void GetAllSubTopics(Topic topic)
-        {
-            foreach (var subTopic in topic.SubTopics)
-            {
-                AllTopics.Add(subTopic);
-
-                if (subTopic.HasSubTopics)
-                {
-                    GetAllSubTopics(subTopic);
-                }
-            }
-        }
-
-        public bool SetNextTaskToCurrent()
-        {
-            var hasNextTask = false;
-
-            if (CurrentTopic.Tasks.Count > currentTaskIndex + 1)
-            {
-                CurrentTask = CurrentTopic.Tasks[++currentTaskIndex];
-                hasNextTask = true;
-            }
-            else
-            {
-                for (var topicIndex = currentTopicIndex + 1; topicIndex < AllTopics.Count; topicIndex++)
-                {
-                    if (AllTopics[topicIndex].HasTasks)
+                    if (subTopic.HasSubTopics)
                     {
-                        CurrentTopic = AllTopics[topicIndex];
-                        CurrentTask = CurrentTopic.Tasks[0];
-
-                        currentTaskIndex = 0;
-                        currentTopicIndex = topicIndex;    
-
-                        hasNextTask = true;
-                        break;
+                        foreach (var pair in GetTasksFromTopic(subTopic))
+                        {
+                            tasksAndTopics.Add(pair.Key, pair.Value);
+                        }
                     }
                 }
             }
 
-            return hasNextTask;
+            return tasksAndTopics;
         }
 
-        public bool SetPrevTaskToCurrent()
+        public double CountTestMark(ref Dictionary<Task, TaskResult> answers, out double maxMark)
         {
-            var hasPrevTask = false;
-
-            if (currentTaskIndex > 0)
-            {
-                CurrentTask = CurrentTopic.Tasks[--currentTaskIndex];
-                hasPrevTask = true;
-            }
-            else
-            {
-                for (var topicIndex = currentTopicIndex - 1; topicIndex >= 0; topicIndex--)
-                {
-                    if (AllTopics[topicIndex].HasTasks)
-                    {
-                        CurrentTopic = AllTopics[topicIndex];
-                        CurrentTask = CurrentTopic.Tasks[^1];
-
-                        currentTopicIndex = topicIndex;
-                        currentTaskIndex = CurrentTopic.Tasks.Count - 1;
-
-                        hasPrevTask = true;
-                        break;
-                    }
-                }
-            }
-
-            return hasPrevTask;
-        }
-
-        public void SetResult(Task task, dynamic answer)
-        {
-            taskResults[task] = new TaskResult(CurrentTask, answer);
-        }
-
-        public double GetTestMark(out double maxMark)
-        {
-            var testMark = 0.0;
+            var mark = 0.0;
             maxMark = 0.0;
 
-            foreach (var task in taskResults.Keys)
+            foreach (var pair in answers)
             {
-                maxMark += task.Mark;
+                maxMark += pair.Key.Mark;
 
-                if (taskResults[task] is null)
+                if (pair.Key is SingleChoice scTask)
                 {
-                    continue;
-                }
+                    var taskMark = CountSingleChoiceMark(scTask, pair.Value.Answer);
 
-                if (task is SingleChoice scTask)
+                    mark += taskMark;
+                    answers[pair.Key].Mark = taskMark;
+                }
+                else if (pair.Key is MultipleChoice mcTask)
                 {
-                    testMark += GetSingleChoiceMark(scTask, taskResults[task]);
+                    mark += CountMultipleChoiceMark(mcTask, pair.Value.Answer);
                 }
-                else if (task is MultipleChoice mcTask)
-                {
-                    testMark += GetMultipleChoiceMark(mcTask, taskResults[task]);
-                }
-            }
-
-            testResult = new TestResult(CurrentTest, taskResults, testMark);
-            if (StudentName == null)
-            {
-                StudentName = "Unknown";
-            }
-            testResult.StudentName = StudentName;
-
-            return testMark;
-        }
-
-        private double GetSingleChoiceMark(SingleChoice task, TaskResult taskResult)
-        {
-            var answerIndex = (int)taskResult.Answer;
-            var mark = 0.0;
-
-            if (answerIndex == task.RightAnswerIndex)
-            {
-                mark = task.Mark;
             }
 
             return mark;
         }
 
-        private double GetMultipleChoiceMark(MultipleChoice task, TaskResult taskResult)
+        private double CountSingleChoiceMark(SingleChoice task, int answerIndex)
         {
-            var answerIndexes = (List<int>)taskResult.Answer;
+            if (task.RightAnswerIndex == answerIndex)
+            {
+                return task.Mark;
+            }
+
+            return 0;
+        }
+
+        private double CountMultipleChoiceMark(MultipleChoice task, List<int> answerIndexes)
+        {
             var mark = 0.0;
 
             var additionForRightAnswer = task.Mark / task.RightAnswersIndexes.Count;
@@ -226,27 +119,6 @@ namespace Core
             }
 
             return mark;
-        }
-
-        public void SaveResult(IDataProvider<TestResult> resultProvider)
-        {
-            if (testResult != null)
-            {
-                resultProvider.Save(testResult);
-            }
-        }
-
-        public bool WasAnswerGiven(out dynamic answer)
-        {
-            answer = null;
-
-            if (taskResults[CurrentTask] != null) 
-            {
-                answer = taskResults[CurrentTask].Answer;
-                return true;
-            }
-
-            return false;
         }
     }
 }

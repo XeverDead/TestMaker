@@ -24,7 +24,15 @@ namespace UI.DialogWindows
 
         public string EnteredName
         {
-            get => nameBox.Text;
+            get
+            {
+                if (string.IsNullOrWhiteSpace(nameBox.Text))
+                {
+                    return "Unknown";
+                }
+
+                return nameBox.Text;
+            }
         }
 
         private void OkButtonClick(object sender, RoutedEventArgs e)

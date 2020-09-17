@@ -28,14 +28,33 @@ namespace UI
     public partial class MainWindow : Window
     {
         private readonly DefaultPassingCore core;
+        private Dictionary<Lib.Task, Topic> tasksAndTopics;
+
         private ITaskPage currentPage;
+
+        private string studentName;
+
+        private List<Lib.Task> tasks;
+        private int currentTaskIndex;
+
+        private Dictionary<Lib.Task, TaskResult> answers;
         public MainWindow()
         { 
             InitializeComponent();
 
-            core = new DefaultPassingCore(new JsonDataProvider<Test>("Test"));
+            studentName = GetStudentName();
 
-            core.StudentName = GetStudentName();
+            core = new DefaultPassingCore(new JsonDataProvider<Test>("Test"));
+            tasksAndTopics = core.GetTest();
+
+            tasks = new List<Lib.Task>(tasksAndTopics.Keys);
+            currentTaskIndex = 0;
+
+            answers = new Dictionary<Lib.Task, TaskResult>();
+            foreach (var task in tasks)
+            {
+                answers.Add(task, null);
+            }
 
             SetNewPage();
         }
@@ -44,13 +63,10 @@ namespace UI
         {
             SaveAnswer();
 
-            if (core.SetNextTaskToCurrent())
+            if (currentTaskIndex + 1 < tasks.Count)
             {
+                currentTaskIndex++;
                 SetNewPage();
-            }
-            else
-            {
-                AskToMoveToResultScreen();
             }
         }
 
@@ -58,43 +74,49 @@ namespace UI
         {
             SaveAnswer();
 
-            if (core.SetPrevTaskToCurrent())
+            if (currentTaskIndex > 0) 
             {
+                currentTaskIndex--;
                 SetNewPage();
             }
         }
 
+        private void FinishButtonClick(object sender, RoutedEventArgs e)
+        {
+            AskToMoveToResultScreen();
+        }
+
         private void SetNewPage()
         {
-            foreach (var element in mainPanel.Children)
+            foreach (var element in mainPanel.Children) 
             {
-                if (element is Grid taskGrid)
-                {                   
+                if (element is Grid taskGrid && !element.Equals(buttonGrid))
+                {
                     mainPanel.Children.Remove(taskGrid);
                     break;
                 }
             }
 
-            if (core.CurrentTask is SingleChoice)
+            if (tasks[currentTaskIndex] is SingleChoice scTask)
             {
-                if (core.WasAnswerGiven(out dynamic answer))
+                if (answers[scTask] != null)
                 {
-                    currentPage = new SingleChoicePage(core.CurrentTask as SingleChoice, answer);
+                    currentPage = new SingleChoicePage(scTask, answers[scTask].Answer);
                 }
                 else
                 {
-                    currentPage = new SingleChoicePage(core.CurrentTask as SingleChoice);
+                    currentPage = new SingleChoicePage(scTask);
                 }
             }
-            else if (core.CurrentTask is MultipleChoice)
+            else if (tasks[currentTaskIndex] is MultipleChoice mcTask)
             {
-                if (core.WasAnswerGiven(out dynamic answer))
+                if (answers[mcTask] != null)
                 {
-                    currentPage = new MultipleChoicePage(core.CurrentTask as MultipleChoice, answer);
+                    currentPage = new MultipleChoicePage(mcTask, answers[mcTask].Answer);
                 }
                 else
                 {
-                    currentPage = new MultipleChoicePage(core.CurrentTask as MultipleChoice, answer);
+                    currentPage = new MultipleChoicePage(mcTask);
                 }
             }
 
@@ -108,17 +130,28 @@ namespace UI
         {
             if (currentPage.IsAnswerChosen)
             {
-                core.SetResult(currentPage.Task, currentPage.Answer);
+                answers[tasks[currentTaskIndex]] = new TaskResult(tasks[currentTaskIndex], currentPage.Answer);
             }
         }
-
-        private void AskToMoveToResultScreen()
+    
+        private void AskToMoveToResultScreen()//Результаты показываются в заглушке просто для их контроля. Позже сделаю норм окно.
         {
-            var result = MessageBox.Show("Would you like to end this try?", "Ending", MessageBoxButton.YesNo);
+            var result = MessageBox.Show("Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.Yes)
             {
-                var mark = core.GetTestMark(out double maxMark);
+                var mark = core.CountTestMark(ref answers, out double maxMark);
+
+                var marks = new StringBuilder();
+
+                foreach (var taskResult in answers.Values)
+                {
+                    marks.Append(taskResult.Mark + " ");
+                }
+
+                marks.Append("\n" + mark + " out of " + maxMark);
+
+                MessageBox.Show(marks.ToString());
             }
         }
 

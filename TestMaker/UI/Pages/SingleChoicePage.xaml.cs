@@ -25,13 +25,10 @@ namespace UI
     {
         public dynamic Answer { get; protected set; }
         public bool IsAnswerChosen { get; protected set; }
-        public Task Task { get; protected set; }
 
         public SingleChoicePage(SingleChoice task)
         {
             InitializeComponent();
-
-            Task = task;
 
             questionBlock.Text = task.Question;
 

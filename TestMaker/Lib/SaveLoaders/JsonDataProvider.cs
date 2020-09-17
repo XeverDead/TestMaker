@@ -1,5 +1,7 @@
 ﻿using Lib.ResultTypes;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Lib
@@ -8,9 +10,17 @@ namespace Lib
     {
         private readonly string path;
 
+        private Dictionary<Type, string> fileExtensions;
+
         public JsonDataProvider(string path)
         {
             this.path = path;
+
+            fileExtensions = new Dictionary<Type, string>()
+            {
+                [typeof(Test)] = ".tmt",
+                [typeof(TestResult)] = ".tmr"
+            };
         }
 
         private JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
@@ -21,7 +31,7 @@ namespace Lib
 
         public void Save(TData data)
         {
-            using (var writer = new StreamWriter($"{path}.tmt"))
+            using (var writer = new StreamWriter($"{path}{fileExtensions[typeof(TData)]}"))
             {
                 writer.WriteLine(JsonConvert.SerializeObject(data, serializerSettings));
             }
@@ -31,7 +41,7 @@ namespace Lib
         {
             TData data;
 
-            using (var reader = new StreamReader($"{path}.tmt"))
+            using (var reader = new StreamReader($"{path}{fileExtensions[typeof(TData)]}"))
             {
                 var text = reader.ReadToEnd();
                 data = JsonConvert.DeserializeObject<TData>(text, serializerSettings);

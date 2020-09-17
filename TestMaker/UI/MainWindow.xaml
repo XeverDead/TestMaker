@@ -7,9 +7,18 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <DockPanel x:Name="mainPanel">
-        <UniformGrid x:Name="buttonGrid" DockPanel.Dock="Bottom" Columns="2">
+        <Grid x:Name="buttonGrid" DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <Button x:Name="prevButton" Content="&lt;-" Click="PrevButtonClick"></Button>
-            <Button x:Name="nextButton" Content="->" Click="NextButtonClick"></Button>
-        </UniformGrid>
+            <Button x:Name="nextButton" Content="->" Click="NextButtonClick" Grid.Column="1"></Button>
+            <Button x:Name="finishButton" Content="Finish" Click="FinishButtonClick" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"></Button>
+        </Grid>
     </DockPanel>
 </Window>
