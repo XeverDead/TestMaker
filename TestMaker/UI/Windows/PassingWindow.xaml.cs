@@ -36,6 +36,9 @@ namespace UI
 
         private List<Lib.Task> tasks;
         private int currentTaskIndex;
+        private string testName;
+        private bool isTestTimeLimited;
+        private int testTime;
 
         private List<TaskResult> results;
         public PassingWindow()
@@ -45,7 +48,7 @@ namespace UI
             studentName = GetStudentName();
 
             core = new DefaultPassingCore(new JsonDataProvider<Test>("Test"));
-            tasksAndTopics = core.GetTest();
+            (testName, tasksAndTopics, isTestTimeLimited, testTime) = core.GetTest();
 
             tasks = new List<Lib.Task>(tasksAndTopics.Keys);
             currentTaskIndex = 0;
@@ -68,6 +71,10 @@ namespace UI
                 currentTaskIndex++;
                 SetNewPage();
             }
+            else
+            {
+                MessageBox.Show("This is last task", "Last task");
+            }
         }
 
         private void PrevButtonClick(object sender, RoutedEventArgs e)
@@ -78,6 +85,10 @@ namespace UI
             {
                 currentTaskIndex--;
                 SetNewPage();
+            }
+            else
+            {
+                MessageBox.Show("This is first task", "First task");
             }
         }
 
@@ -152,6 +163,8 @@ namespace UI
                 marks.Append("\n" + mark + " out of " + maxMark);
 
                 MessageBox.Show(marks.ToString());
+
+                Close();
             }
         }
 

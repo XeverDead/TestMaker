@@ -1,7 +1,6 @@
 ﻿using Lib;
 using Lib.ResultTypes;
 using Lib.TaskTypes;
-using System;
 using System.Collections.Generic;
 
 namespace Core
@@ -15,7 +14,7 @@ namespace Core
             test = taskProvider.Load();
         }
 
-        public Dictionary<Task, Topic> GetTest()
+        public (string, Dictionary<Task, Topic>, bool, int) GetTest()
         {
             var tasksAndTopics = new Dictionary<Task, Topic>();
 
@@ -27,7 +26,7 @@ namespace Core
                 }
             }
 
-            return tasksAndTopics;
+            return (test.Name, tasksAndTopics, test.IsTimeLimited, test.Time);
         }
 
         private Dictionary<Task, Topic> GetTasksFromTopic(Topic topic)

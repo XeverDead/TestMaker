@@ -5,39 +5,27 @@ namespace Lib
 {
     public class Topic
     {
-        public string Name { get; private set; }
-        public List<Topic> SubTopics { get; private set; }
-        public List<Task> Tasks { get; private set; }
-        public bool HasSubTopics { get; private set; }
-        public bool HasTasks { get; private set; }
-
-        public Topic(string name, List<Task> tasks)
+        public string Name { get; set; }
+        public List<Topic> SubTopics { get; set; }
+        public List<Task> Tasks { get; set; }
+        public bool HasSubTopics
         {
-            Name = name;
-            SubTopics = new List<Topic>();
-            HasSubTopics = false;
-
-            if (tasks == null || tasks.Count == 0)
+            get
             {
-                Tasks = new List<Task>();
-                HasTasks = false;
+                return SubTopics != null && SubTopics.Count != 0;
             }
-            else
+        }
+        public bool HasTasks
+        {
+            get
             {
-                Tasks = new List<Task>(tasks);
-                HasTasks = true;
+                return Tasks != null && Tasks.Count != 0;
             }
         }
 
-        [JsonConstructor]
-        public Topic(string name, List<Task> tasks, List<Topic> subTopics)
-            : this(name, tasks)
+        public override string ToString()
         {
-            if (subTopics != null && subTopics.Count > 0)
-            {
-                SubTopics = new List<Topic>(subTopics);
-                HasSubTopics = true;
-            }
+            return Name;
         }
     }
 }

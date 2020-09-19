@@ -7,36 +7,5 @@ namespace Lib.TaskTypes
     {
         public List<string> Options { get; set; }
         public int RightAnswerIndex { get; set; }
-
-        //public SingleChoice(string question, List<string> options, int rightAnswerIndex, double mark)
-        //    : base(question, options, mark)
-        //{
-        //    if (options is null)
-        //    {
-        //        Options = new List<string>();
-        //    }
-        //    else
-        //    {
-        //        Options = new List<string>(options);
-        //    }
-
-        //    RightAnswerIndex = rightAnswerIndex;
-        //}
-
-        //[JsonConstructor]
-        //public SingleChoice(int time, string question, List<string> options, int rightAnswerIndex, double mark)
-        //    : base(time, question, options, mark) 
-        //{
-        //    if (options is null)
-        //    {
-        //        Options = new List<string>();
-        //    }
-        //    else
-        //    {
-        //        Options = new List<string>(options);
-        //    }
-
-        //    RightAnswerIndex = rightAnswerIndex;
-        //}
     }
 }
