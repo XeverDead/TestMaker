@@ -16,9 +16,9 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="prevButton" Content="&lt;-" Click="PrevButtonClick"></Button>
-            <Button x:Name="nextButton" Content="->" Click="NextButtonClick" Grid.Column="1"></Button>
-            <Button x:Name="finishButton" Content="Finish" Click="FinishButtonClick" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"></Button>
+            <Button x:Name="prevButton" Content="&lt;-"></Button>
+            <Button x:Name="nextButton" Content="->" Grid.Column="1"></Button>
+            <Button x:Name="finishButton" Content="Finish" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"></Button>
         </Grid>
     </DockPanel>
 </Window>

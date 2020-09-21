@@ -9,5 +9,16 @@ namespace Lib
         public int Time { get; set; }
         public bool IsTimeLimited { get => Time > 0; }
         public List<Topic> Topics { get; set; }
+
+        public Test()
+        {
+            Name = string.Empty;
+            Topics = new List<Topic>();
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -13,31 +13,41 @@ using System.Windows.Shapes;
 namespace UI.DialogWindows
 {
     /// <summary>
-    /// Логика взаимодействия для EnterNameWindow.xaml
+    /// Логика взаимодействия для RenameWindow.xaml
     /// </summary>
-    public partial class EnterNameWindow : Window
+    public partial class TextInputWindow : Window
     {
-        public EnterNameWindow()
+        public TextInputWindow()
         {
             InitializeComponent();
+
+            okButton.Click += OkButtonClick;
+            cancelButton.Click += CancelButtonClick;
+
+            enteredTextBox.ForceCursor = true;
         }
 
-        public string EnteredName
+        public string EnteredText
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(nameBox.Text))
+                if (enteredTextBox.Text == null || string.IsNullOrWhiteSpace(enteredTextBox.Text))
                 {
                     return "Unknown";
                 }
 
-                return nameBox.Text;
+                return enteredTextBox.Text;
             }
         }
 
         private void OkButtonClick(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
+        }
+
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
         }
     }
 }

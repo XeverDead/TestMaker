@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <UniformGrid x:Name="mainGrid" Rows="4">
-        <Button x:Name="passButton" Click="PassButtonClick" Content="Pass test"></Button>
-        <Button x:Name="newButton" Click="NewButtonClick" Content="Create new test"></Button>
-        <Button x:Name="redactButton" Click="RedactButtonClick" Content="Redact test"></Button>
-        <Button x:Name="exitButton" Click="ExitButtonClick" Content="Exit"></Button>
+        <Button x:Name="passButton" Content="Pass test"></Button>
+        <Button x:Name="newButton" Content="Create new test"></Button>
+        <Button x:Name="redactButton" Content="Redact test"></Button>
+        <Button x:Name="exitButton" Content="Exit"></Button>
         
     </UniformGrid>
 </Window>

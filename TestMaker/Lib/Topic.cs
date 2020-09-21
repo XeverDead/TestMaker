@@ -23,6 +23,13 @@ namespace Lib
             }
         }
 
+        public Topic()
+        {
+            SubTopics = new List<Topic>();
+            Tasks = new List<Task>();
+            Name = string.Empty;
+        }
+
         public override string ToString()
         {
             return Name;

@@ -25,10 +25,10 @@ namespace UI.Pages
 
             var name = "Unknown";
 
-            var dialog = new EnterNameWindow();
+            var dialog = new TextInputWindow();
             if ((bool)dialog.ShowDialog())
             {
-                name = dialog.EnteredName;
+                name = dialog.EnteredText;
             }
 
             MessageBox.Show(name);

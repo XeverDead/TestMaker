@@ -20,6 +20,11 @@ namespace UI.Windows
         public MainWindow()
         {
             InitializeComponent();
+
+            passButton.Click += PassButtonClick;
+            redactButton.Click += RedactButtonClick;
+            newButton.Click += NewButtonClick;
+            exitButton.Click += ExitButtonClick;
         }
 
         private void PassButtonClick(object sender, RoutedEventArgs e)

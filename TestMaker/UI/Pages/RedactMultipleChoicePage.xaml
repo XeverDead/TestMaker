@@ -25,8 +25,8 @@
                 <Button x:Name="setQuestionButton" Content="Set question" Grid.Row="2"></Button>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Options" x:Name="optionsGroupBox" Grid.Row="1">
-            <Grid x:Name="optionsGrid">
+        <GroupBox Header="Options" x:Name="optionGroupBox" Grid.Row="1">
+            <Grid x:Name="optionGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.2*" />
                     <RowDefinition Height="0.8*"/>
@@ -36,11 +36,14 @@
                     <RowDefinition Height="0.8*"/>
                 </Grid.RowDefinitions>
                 <TextBlock x:Name="optionBlockHeader" Text ="Select options from the list and enter its text" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-                <ComboBox x:Name="optionList" Text="Select option" Grid.Row="1"></ComboBox>
+                <ComboBox x:Name="optionsList" Text="Select option" Grid.Row="1"></ComboBox>
                 <TextBox x:Name="optionTextBox" Grid.Row="2"></TextBox>
-                <Button x:Name="setOptionButton" Content="Set option" Grid.Row="3"></Button>
-                <TextBlock x:Name="rightOptionBlock" Text ="Select right answers" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-                <ComboBox x:Name="rightOptionsSelector" Grid.Row="5"></ComboBox>
+                <UniformGrid x:Name="optionButtonsGrid" Columns="2" Grid.Row="3">
+                    <Button x:Name="setOptionButton" Content="Set option"></Button>
+                    <Button x:Name="deleteOptionButton" Content="Delete option"></Button>
+                </UniformGrid>
+                <TextBlock x:Name="rightOptionBlock" Text ="Select right answer" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                <ComboBox x:Name="rightOptionSelector" Grid.Row="5"></ComboBox>
             </Grid>
         </GroupBox>
     </Grid>

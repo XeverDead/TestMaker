@@ -41,13 +41,13 @@ namespace UI
         private int testTime;
 
         private List<TaskResult> results;
-        public PassingWindow()
+        public PassingWindow(string path)
         { 
             InitializeComponent();
 
             studentName = GetStudentName();
 
-            core = new DefaultPassingCore(new JsonDataProvider<Test>("Test"));
+            core = new DefaultPassingCore(new JsonDataProvider<Test>(path));
             (testName, tasksAndTopics, isTestTimeLimited, testTime) = core.GetTest();
 
             tasks = new List<Lib.Task>(tasksAndTopics.Keys);
@@ -58,6 +58,10 @@ namespace UI
             {
                 results.Add(new TaskResult(task, null));
             }
+
+            prevButton.Click += PrevButtonClick;
+            nextButton.Click += NextButtonClick;
+            finishButton.Click += FinishButtonClick;
 
             SetNewPage();
         }
@@ -170,10 +174,10 @@ namespace UI
 
         private string GetStudentName()
         {
-            var enterNameWindow = new EnterNameWindow();
+            var enterNameWindow = new TextInputWindow();
 
             enterNameWindow.ShowDialog();
-            return enterNameWindow.EnteredName;
+            return enterNameWindow.EnteredText;
         }
     }
 }

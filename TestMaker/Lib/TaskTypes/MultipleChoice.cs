@@ -7,5 +7,11 @@ namespace Lib.TaskTypes
     {
         public List<string> Options { get; set; }
         public List<int> RightAnswersIndexes { get; set; }
+
+        public MultipleChoice()
+        {
+            Options = new List<string>();
+            RightAnswersIndexes = new List<int>();
+        }
     }
 }

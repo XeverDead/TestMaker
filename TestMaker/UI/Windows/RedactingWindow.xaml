@@ -14,8 +14,20 @@
         </Grid.ColumnDefinitions>
         <Grid x:Name="settingsGrid"></Grid>
         <GridSplitter Grid.Column="1" Width="3" VerticalAlignment="Stretch" HorizontalAlignment="Center"></GridSplitter>
-        <TreeView x:Name="topicTree" Grid.Column="2" SelectedItemChanged="TopicTreeSelectedItemChanged">
-
-        </TreeView>
+        <Grid x:Name="topicsGrid" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8*" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TreeView x:Name="topicTree" Grid.Column="2"></TreeView>
+            <UniformGrid x:Name="addButtonsGrid" Rows="2" Columns="2" Grid.Row="1">
+                <Button x:Name="addTaskButton" Content="Add task"></Button>
+                <Button x:Name="addTopicButton" Content="Add topic"></Button>
+                <Button x:Name="removeButton" Content="Remove"></Button>
+                <Button x:Name="renameButton" Content="Rename"></Button>
+            </UniformGrid>
+            <Button x:Name="finishButton" Content="Save test" Grid.Row="2"></Button>
+        </Grid>
     </Grid>
 </Window>
