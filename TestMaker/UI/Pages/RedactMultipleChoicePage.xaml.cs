@@ -32,11 +32,11 @@ namespace UI.Pages
             foreach (var option in task.Options)
             {
                 optionsList.Items.Add(new ComboBoxItem() { Content = option });
-                rightOptionSelector.Items.Add(new ComboBoxItem { Content = option });
+                rightOptionsSelector.Items.Add(new ComboBoxItem { Content = option });
             }
             SetAddNewOption();
 
-            rightOptionSelector.SelectedIndex = task.RightAnswersIndexes[0];
+            //rightOptionsSelector.SelectedIndex = task.RightAnswersIndexes[0];
 
             setQuestionButton.Click += SetQuestionButtonClick;
             setOptionButton.Click += SetOptionButtonClick;
@@ -46,7 +46,7 @@ namespace UI.Pages
             questionTextBox.TextChanged += QuestionTextBoxTextChanged;
 
             optionsList.SelectionChanged += OptionsListSelectionChanged;
-            rightOptionSelector.SelectionChanged += RightOptionSelectorSelectionChanged;
+            rightOptionsSelector.SelectionChanged += RightOptionSelectorSelectionChanged;
 
             setQuestionButton.IsEnabled = false;
             setOptionButton.IsEnabled = false;
@@ -112,10 +112,10 @@ namespace UI.Pages
             {
                 var selectedIndex = optionsList.SelectedIndex;
 
-                var isSelectedRight = rightOptionSelector.SelectedIndex == selectedIndex;
+                var isSelectedRight = rightOptionsSelector.SelectedIndex == selectedIndex;
 
                 optionsList.Items.RemoveAt(selectedIndex);
-                rightOptionSelector.Items.RemoveAt(selectedIndex);
+                rightOptionsSelector.Items.RemoveAt(selectedIndex);
                 task.Options.RemoveAt(selectedIndex);
 
                 if (selectedIndex - 1 >= 0)
@@ -124,7 +124,7 @@ namespace UI.Pages
 
                     if (isSelectedRight)
                     {
-                        rightOptionSelector.SelectedIndex = selectedIndex - 1;
+                        rightOptionsSelector.SelectedIndex = selectedIndex - 1;
                     }
                 }
                 else
@@ -133,7 +133,7 @@ namespace UI.Pages
 
                     if (isSelectedRight)
                     {
-                        rightOptionSelector.SelectedIndex = selectedIndex;
+                        rightOptionsSelector.SelectedIndex = selectedIndex;
                     }
                 }
             }
@@ -147,11 +147,11 @@ namespace UI.Pages
             {
                 task.Options[selectedIndex] = optionTextBox.Text;
 
-                rightOptionSelector.Items[selectedIndex] = new ComboBoxItem() { Content = optionTextBox.Text };
+                rightOptionsSelector.Items[selectedIndex] = new ComboBoxItem() { Content = optionTextBox.Text };
                 optionsList.Items[selectedIndex] = new ComboBoxItem() { Content = optionTextBox.Text };
 
                 optionsList.SelectedIndex = selectedIndex;
-                rightOptionSelector.SelectedIndex = task.RightAnswersIndexes[0];
+                rightOptionsSelector.SelectedIndex = task.RightAnswersIndexes[0];
             }
             else
             {
@@ -162,20 +162,20 @@ namespace UI.Pages
                 optionsList.Items.RemoveAt(optionsList.SelectedIndex);
 
                 optionsList.Items.Add(new ComboBoxItem() { Content = newOptionText });
-                rightOptionSelector.Items.Add(new ComboBoxItem() { Content = newOptionText });
+                rightOptionsSelector.Items.Add(new ComboBoxItem() { Content = newOptionText });
 
                 optionsList.SelectedIndex = selectedIndex;
 
                 SetAddNewOption();
             }
 
-            if (rightOptionSelector.SelectedItem != null)
+            if (rightOptionsSelector.SelectedItem != null)
             {
-                rightOptionSelector.SelectedIndex = task.RightAnswersIndexes[0];
+                rightOptionsSelector.SelectedIndex = task.RightAnswersIndexes[0];
             }
             else
             {
-                rightOptionSelector.SelectedIndex = selectedIndex;
+                rightOptionsSelector.SelectedIndex = selectedIndex;
             }
         }
 
@@ -186,6 +186,6 @@ namespace UI.Pages
             optionsList.Items.Add(new ComboBoxItem() { Content = "Add new option" });
         }
 
-        private void SetRightAnswerIndex() => task.RightAnswersIndexes[0] = rightOptionSelector.SelectedIndex;
+        private void SetRightAnswerIndex() { } //task.RightAnswersIndexes[0] = rightOptionsSelector.SelectedIndex;
     }
 }

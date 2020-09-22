@@ -25,7 +25,7 @@ namespace UI.Pages
 
             var name = "Unknown";
 
-            var dialog = new TextInputWindow();
+            var dialog = new TextInputWindow("Enter your name");
             if ((bool)dialog.ShowDialog())
             {
                 name = dialog.EnteredText;

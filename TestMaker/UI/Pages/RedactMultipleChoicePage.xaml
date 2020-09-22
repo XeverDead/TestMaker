@@ -42,8 +42,8 @@
                     <Button x:Name="setOptionButton" Content="Set option"></Button>
                     <Button x:Name="deleteOptionButton" Content="Delete option"></Button>
                 </UniformGrid>
-                <TextBlock x:Name="rightOptionBlock" Text ="Select right answer" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-                <ComboBox x:Name="rightOptionSelector" Grid.Row="5"></ComboBox>
+                <TextBlock x:Name="rightOptionsBlock" Text ="Select right answer" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                <ComboBox x:Name="rightOptionsSelector" Grid.Row="5"></ComboBox>
             </Grid>
         </GroupBox>
     </Grid>

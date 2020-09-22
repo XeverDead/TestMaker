@@ -14,7 +14,7 @@ namespace Core
             test = taskProvider.Load();
         }
 
-        public (string, Dictionary<Task, Topic>, bool, int) GetTest()
+        public TaskTopicTestView GetTest()
         {
             var tasksAndTopics = new Dictionary<Task, Topic>();
 
@@ -26,25 +26,31 @@ namespace Core
                 }
             }
 
-            return (test.Name, tasksAndTopics, test.IsTimeLimited, test.Time);
+            var testView = new TaskTopicTestView()
+            {
+                Test = test,
+                TasksAndTopics = tasksAndTopics
+            };
+
+            return testView;
         }
 
         private Dictionary<Task, Topic> GetTasksFromTopic(Topic topic)
         {
             var tasksAndTopics = new Dictionary<Task, Topic>();
 
+            if (topic.HasTasks)
+            {
+                foreach (var task in topic.Tasks)
+                {
+                    tasksAndTopics.Add(task, topic);
+                }
+            }
+
             if (topic.HasSubTopics)
             {
                 foreach (var subTopic in topic.SubTopics)
                 {
-                    if (subTopic.HasTasks)
-                    {
-                        foreach (var task in subTopic.Tasks)
-                        {
-                            tasksAndTopics.Add(task, subTopic);
-                        }
-                    }
-
                     if (subTopic.HasSubTopics)
                     {
                         foreach (var pair in GetTasksFromTopic(subTopic))
@@ -58,7 +64,7 @@ namespace Core
             return tasksAndTopics;
         }
 
-        public double CountTestMark(ref List<TaskResult> results, out double maxMark)
+        public void SetMarksToResults(ref List<TaskResult> results, out double maxMark)
         {
             var mark = 0.0;
             maxMark = 0.0;
@@ -73,60 +79,9 @@ namespace Core
                     continue;
                 }
 
-                if (result.Task is SingleChoice scTask)
-                {
-                    var taskMark = CountSingleChoiceMark(scTask, result.Answer);
-
-                    mark += taskMark;
-                    result.Mark = taskMark;
-                }
-                else if (result.Task is MultipleChoice mcTask)
-                {
-                    var taskMark = CountMultipleChoiceMark(mcTask, result.Answer);
-
-                    mark += taskMark;
-                    result.Mark = taskMark;
-                }
+                mark += result.Task.CountMark(result.Answer);
+                maxMark += result.Task.Mark;
             }
-
-            return mark;
-        }
-
-        private double CountSingleChoiceMark(SingleChoice task, int answerIndex)
-        {
-            if (task.RightAnswerIndex == answerIndex)
-            {
-                return task.Mark;
-            }
-
-            return 0;
-        }
-
-        private double CountMultipleChoiceMark(MultipleChoice task, List<int> answerIndexes)
-        {
-            var mark = 0.0;
-
-            var additionForRightAnswer = task.Mark / task.RightAnswersIndexes.Count;
-            var subtractionForWrongAnswer = task.Mark / (task.Options.Count - task.RightAnswersIndexes.Count);
-
-            foreach (var rightIndex in task.RightAnswersIndexes)
-            {
-                if (answerIndexes.Contains(rightIndex))
-                {
-                    mark += additionForRightAnswer;
-                }
-                else
-                {
-                    mark -= subtractionForWrongAnswer;
-                }
-            }
-
-            if (mark < 0)
-            {
-                mark = 0;
-            }
-
-            return mark;
         }
     }
 }

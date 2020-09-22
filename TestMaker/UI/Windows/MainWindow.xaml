@@ -6,11 +6,9 @@
         xmlns:local="clr-namespace:UI.Windows"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <UniformGrid x:Name="mainGrid" Rows="4">
+    <UniformGrid x:Name="mainGrid" Rows="3">
         <Button x:Name="passButton" Content="Pass test"></Button>
-        <Button x:Name="newButton" Content="Create new test"></Button>
         <Button x:Name="redactButton" Content="Redact test"></Button>
         <Button x:Name="exitButton" Content="Exit"></Button>
-        
     </UniformGrid>
 </Window>

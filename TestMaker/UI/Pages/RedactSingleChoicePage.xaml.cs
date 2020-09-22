@@ -136,6 +136,8 @@ namespace UI.Pages
                         rightOptionSelector.SelectedIndex = selectedIndex;
                     }
                 }
+
+                SetRightAnswerIndex();
             }
         }
 

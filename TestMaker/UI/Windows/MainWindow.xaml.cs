@@ -23,7 +23,6 @@ namespace UI.Windows
 
             passButton.Click += PassButtonClick;
             redactButton.Click += RedactButtonClick;
-            newButton.Click += NewButtonClick;
             exitButton.Click += ExitButtonClick;
         }
 
@@ -39,12 +38,7 @@ namespace UI.Windows
 
         private void ExitButtonClick(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void NewButtonClick(object sender, RoutedEventArgs e)
-        {
-
+            Close();
         }
     }
 }

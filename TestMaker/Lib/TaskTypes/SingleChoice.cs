@@ -12,5 +12,7 @@ namespace Lib.TaskTypes
         {
             Options = new List<string>();
         }
+
+        public override double CountMark(dynamic answerIndex) => RightAnswerIndex == answerIndex ? Mark : 0.0;
     }
 }

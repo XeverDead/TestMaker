@@ -28,7 +28,7 @@ namespace UI
     public partial class PassingWindow : Window
     {
         private readonly DefaultPassingCore core;
-        private Dictionary<Lib.Task, Topic> tasksAndTopics;
+        private TaskTopicTestView testView;
 
         private ITaskPage currentPage;
 
@@ -36,34 +36,55 @@ namespace UI
 
         private List<Lib.Task> tasks;
         private int currentTaskIndex;
-        private string testName;
-        private bool isTestTimeLimited;
-        private int testTime;
 
         private List<TaskResult> results;
-        public PassingWindow(string path)
+
+        private Dictionary<Lib.Task, TreeViewItem> tasksTreeItems;
+        public PassingWindow()
         { 
             InitializeComponent();
 
             studentName = GetStudentName();
 
-            core = new DefaultPassingCore(new JsonDataProvider<Test>(path));
-            (testName, tasksAndTopics, isTestTimeLimited, testTime) = core.GetTest();
+            core = new DefaultPassingCore(new JsonDataProvider<Test>("D:\\Test"));
+            testView = core.GetTest();
 
-            tasks = new List<Lib.Task>(tasksAndTopics.Keys);
+            tasks = new List<Lib.Task>(testView.TasksAndTopics.Keys);
             currentTaskIndex = 0;
 
             results = new List<TaskResult>();
-            foreach (var task in tasks)
+            foreach (var task in testView.TasksAndTopics.Keys)
             {
                 results.Add(new TaskResult(task, null));
             }
+
+            tasksTreeItems = new Dictionary<Lib.Task, TreeViewItem>();
 
             prevButton.Click += PrevButtonClick;
             nextButton.Click += NextButtonClick;
             finishButton.Click += FinishButtonClick;
 
+            testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
+
+            SetTestToTree();
+
             SetNewPage();
+        }
+
+        private void TestTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var currentdItem = testTree.SelectedItem as TreeViewItem;
+
+            var condition = currentdItem.Parent is TreeViewItem;
+
+            while (condition)
+            {
+                currentdItem = currentdItem.Parent as TreeViewItem;
+
+                currentdItem.IsExpanded = true;
+
+                condition = currentdItem.Parent is TreeViewItem;
+            }
         }
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
@@ -103,14 +124,9 @@ namespace UI
 
         private void SetNewPage()
         {
-            foreach (var element in mainPanel.Children) 
-            {
-                if (element is Grid taskGrid && !element.Equals(buttonGrid))
-                {
-                    mainPanel.Children.Remove(taskGrid);
-                    break;
-                }
-            }
+            taskGrid.Children.Clear();
+
+            tasksTreeItems[tasks[currentTaskIndex]].IsSelected = true;
 
             if (tasks[currentTaskIndex] is SingleChoice scTask)
             {
@@ -138,7 +154,7 @@ namespace UI
             var pageGrid = currentPage.Content as Grid;
             currentPage.Content = null;
 
-            mainPanel.Children.Add(pageGrid);
+            taskGrid.Children.Add(pageGrid);
         }
 
         private void SaveAnswer()
@@ -155,16 +171,18 @@ namespace UI
 
             if (result == MessageBoxResult.Yes)
             {
-                var mark = core.CountTestMark(ref results, out double maxMark);
+                core.SetMarksToResults(ref results, out double maxMark);
 
                 var marks = new StringBuilder();
+                var totalMark = 0.0;
 
                 foreach (var taskResult in results)
                 {
                     marks.Append(taskResult.Mark + " ");
+                    totalMark += taskResult.Mark;
                 }
 
-                marks.Append("\n" + mark + " out of " + maxMark);
+                marks.Append("\n" + totalMark + " out of " + maxMark);
 
                 MessageBox.Show(marks.ToString());
 
@@ -174,10 +192,52 @@ namespace UI
 
         private string GetStudentName()
         {
-            var enterNameWindow = new TextInputWindow();
+            var enterNameWindow = new TextInputWindow("Enter your name");
 
             enterNameWindow.ShowDialog();
             return enterNameWindow.EnteredText;
+        }
+
+        private void SetTestToTree()
+        {
+            var headItem = new TreeViewItem() { Header = testView.Test };
+            testTree.Items.Add(headItem);
+
+            foreach (var topic in testView.Test.Topics)
+            {
+                var topicItem = new TreeViewItem() { Header = topic };
+                headItem.Items.Add(topicItem);
+
+                SetTopicItemsToTree(topicItem);
+            }
+        }
+
+        private void SetTopicItemsToTree(TreeViewItem topicItem)
+        {
+            var topic = topicItem.Header as Topic;
+
+            if (topic.HasTasks)
+            {
+                foreach (var task in topic.Tasks)
+                {
+                    var taskItem = new TreeViewItem() { Header = task };
+
+                    tasksTreeItems.Add(task, taskItem);
+
+                    topicItem.Items.Add(taskItem);
+                }
+            }
+
+            if (topic.HasSubTopics)
+            {
+                foreach (var subTopic in topic.SubTopics)
+                {
+                    var subTopicItem = new TreeViewItem() { Header = subTopic };
+
+                    topicItem.Items.Add(subTopicItem);
+                    SetTopicItemsToTree(subTopicItem);
+                }
+            }
         }
     }
 }

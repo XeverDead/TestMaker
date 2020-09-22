@@ -17,12 +17,17 @@ namespace UI.DialogWindows
     /// </summary>
     public partial class TextInputWindow : Window
     {
-        public TextInputWindow()
+        public TextInputWindow(string header)
         {
             InitializeComponent();
 
             okButton.Click += OkButtonClick;
             cancelButton.Click += CancelButtonClick;
+
+            if (!(header == null || string.IsNullOrWhiteSpace(header)))
+            {
+                Title = header;
+            }
 
             enteredTextBox.ForceCursor = true;
         }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UI.Windows"
         mc:Ignorable="d"
-        Title="RedactingWindow" Height="450" Width="800">
+        Title="RedactingWindow" Height="500" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -20,7 +20,7 @@
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TreeView x:Name="topicTree" Grid.Column="2"></TreeView>
+            <TreeView x:Name="testTree" Grid.Column="2"></TreeView>
             <UniformGrid x:Name="addButtonsGrid" Rows="2" Columns="2" Grid.Row="1">
                 <Button x:Name="addTaskButton" Content="Add task"></Button>
                 <Button x:Name="addTopicButton" Content="Add topic"></Button>

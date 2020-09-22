@@ -11,6 +11,8 @@ using Core;
 using System.Collections.ObjectModel;
 using System.IO;
 using UI.DialogWindows;
+using System.Printing;
+using System.Security.Cryptography.Xml;
 
 namespace UI.Windows
 {
@@ -22,19 +24,16 @@ namespace UI.Windows
         private DefaultRedactingCore core;
         private Test test;
 
-        public RedactingWindow()
+        public RedactingWindow(string path, bool isNewTest)
         {
             InitializeComponent();
 
-            core = new DefaultRedactingCore(new JsonDataProvider<Test>("Test"), false);
-            test = GetTempTest();
+            core = new DefaultRedactingCore(new JsonDataProvider<Test>("D:\\Test"), isNewTest);
+            test = core.GetTest();
 
-            //if (!isNewTest)
-            {
-                SetTestToTree();
-            }
+            SetTestToTree();
 
-            topicTree.SelectedItemChanged += TopicTreeSelectedItemChanged;
+            testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
 
             addTaskButton.IsEnabled = false;
             addTopicButton.IsEnabled = false;
@@ -50,27 +49,40 @@ namespace UI.Windows
 
         private void RenameButtonClick(object sender, RoutedEventArgs e)
         {
-            Rename(topicTree.SelectedItem as TreeViewItem);
+            Rename(testTree.SelectedItem as TreeViewItem);
         }
 
         private void FinishButtonClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            FinishRedacting();
         }
 
         private void RemoveButtonClick(object sender, RoutedEventArgs e)
         {
-            Remove(topicTree.SelectedItem as TreeViewItem);
+            Remove(testTree.SelectedItem as TreeViewItem);
         }
 
         private void AddTopicButtonClick(object sender, RoutedEventArgs e)
         {
-            AddTopic(topicTree.SelectedItem as TreeViewItem);
+            AddTopic(testTree.SelectedItem as TreeViewItem);
         }
 
         private void AddTaskButtonClick(object sender, RoutedEventArgs e)
         {
-            AddTask(topicTree.SelectedItem as TreeViewItem);
+            AddTask(testTree.SelectedItem as TreeViewItem);
+        }
+
+        private void FinishRedacting()
+        {
+            var messageBoxResult = MessageBox.Show("Do you want to finish redacting this test?", "Finish", MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.Yes)
+            {
+                core.SaveTest(test);
+
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+                Close();
+            }
         }
 
         private void Remove(TreeViewItem itemToRemove)
@@ -137,9 +149,9 @@ namespace UI.Windows
             }
         }
 
-        private void TopicTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void TestTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var selectedItem = topicTree.SelectedItem as TreeViewItem;
+            var selectedItem = testTree.SelectedItem as TreeViewItem;
 
             if (selectedItem.Header is Topic)
             {
@@ -169,7 +181,7 @@ namespace UI.Windows
         private void SetTestToTree()
         {
             var headItem = new TreeViewItem() { Header = test };
-            topicTree.Items.Add(headItem);
+            testTree.Items.Add(headItem);
 
             foreach (var topic in test.Topics)
             {
@@ -184,11 +196,14 @@ namespace UI.Windows
         {
             dynamic testOrTopic = treeItem.Header;
 
-            var enterTextWindow = new TextInputWindow();
+            var enterTextWindow = new TextInputWindow("Rename");
 
-            testOrTopic.Name = enterTextWindow.EnteredText;
+            if (enterTextWindow.ShowDialog() == true)
+            {
+                testOrTopic.Name = enterTextWindow.EnteredText;
 
-            RefreshTreeItem(ref treeItem);
+                RefreshTreeItem(ref treeItem);
+            }
         }
 
         private void TaskItemUnselected(object sender, RoutedEventArgs e)
