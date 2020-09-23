@@ -43,7 +43,7 @@ namespace Core
             var taskTypes = new List<Type>();
             foreach (var type in types)
             {
-                if (type.Namespace == "Lib.TaskTypes")
+                if (type.Namespace == "Lib.TaskTypes" && !type.IsAbstract)
                 {
                     taskTypes.Add(type);
                 }

@@ -8,14 +8,37 @@ namespace Core
     public class DefaultPassingCore
     {
         private Test test;
+        private TestResult testResult;
 
-        public DefaultPassingCore(IDataProvider<Test> taskProvider)
+        private IDataProvider<Test> testProvider;
+        private IDataProvider<TestResult> resultProvider;
+
+        private bool isForShowingResults;
+
+        public DefaultPassingCore(IDataProvider<Test> testProvider, IDataProvider<TestResult> resultProvider, bool isForShowingResults)
         {
-            test = taskProvider.Load();
+            this.testProvider = testProvider;
+            this.resultProvider = resultProvider;
+
+            this.isForShowingResults = isForShowingResults;
         }
 
         public TaskTopicTestView GetTest()
         {
+            if (isForShowingResults)
+            {
+                if (testResult == null)
+                {
+                    GetResults();
+                }
+
+                test = testResult.Test;
+            }
+            else
+            {
+                test = testProvider.Load();
+            }
+
             var tasksAndTopics = new Dictionary<Task, Topic>();
 
             foreach (var topic in test.Topics)
@@ -80,8 +103,34 @@ namespace Core
                 }
 
                 mark += result.Task.CountMark(result.Answer);
-                maxMark += result.Task.Mark;
             }
+        }
+
+        public void SaveResult(List<TaskResult> results, string studentName)
+        {
+            var mark = 0.0;
+
+            foreach (var result in results)
+            {
+                if (result.Answer == null)
+                {
+                    result.Mark = 0;
+                    continue;
+                }
+
+                mark += result.Task.CountMark(result.Answer);
+            }
+
+            testResult = new TestResult(test, results, mark, studentName);
+
+            resultProvider.Save(testResult);
+        }
+
+        public List<TaskResult> GetResults()
+        {
+            testResult = resultProvider.Load();
+
+            return testResult.TaskResults;
         }
     }
 }

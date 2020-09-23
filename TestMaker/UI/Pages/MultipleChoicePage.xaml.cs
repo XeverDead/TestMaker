@@ -21,12 +21,25 @@ namespace UI.Pages
     /// </summary>
     public partial class MultipleChoicePage : Page, ITaskPage
     {
+        private Color chosenOptionColor = Color.FromArgb(200, 200, 200, 0);
+        private Color chosenRightOptionColor = Color.FromArgb(200, 0, 200, 0);
+        private Color chosenWrongOptionColor = Color.FromArgb(255, 255, 0, 0);
+        private Color notChosenRightOptionColor = Color.FromArgb(200, 100, 0, 200);
+
         public dynamic Answer { get; protected set; }
         public bool IsAnswerChosen { get; protected set; }
+
+        private List<ToggleButton> optionButtons;
+
+        private bool isResultPage;
 
         public MultipleChoicePage(MultipleChoice task)
         {
             InitializeComponent();
+
+            optionButtons = new List<ToggleButton>();
+
+            isResultPage = false;
 
             questionBlock.Text = task.Question;
 
@@ -39,17 +52,40 @@ namespace UI.Pages
         public MultipleChoicePage(MultipleChoice task, List<int> chosenButtonIndexes)
             : this(task)
         {
-            for (var index = 0; index < optionsGrid.Children.Count; index++)
+            foreach (var index in chosenButtonIndexes)
             {
-                if (optionsGrid.Children[index] is Button button)
+                optionButtons[index].Background = new SolidColorBrush(chosenOptionColor);
+            }
+        }
+
+        public MultipleChoicePage(MultipleChoice task, List<int> chosenButtonIndexes, List<int> rightAnswersIndexes)
+        {
+            InitializeComponent();
+
+            optionButtons = new List<ToggleButton>();
+
+            isResultPage = true;
+
+            questionBlock.Text = task.Question;
+
+            for (var optionNum = 0; optionNum < task.Options.Count; optionNum++)
+            {
+                AddOption(optionNum, task.Options[optionNum]);
+            }
+
+            for (var index = 0; index < optionButtons.Count; index++)
+            {
+                if (chosenButtonIndexes.Contains(index) && rightAnswersIndexes.Contains(index))
                 {
-                    foreach (var optionIndex in chosenButtonIndexes)
-                    {
-                        if (button.Name == $"option{optionIndex}")
-                        {
-                            button.Background = new SolidColorBrush(Colors.Red);
-                        }
-                    }
+                    optionButtons[index].Background = new SolidColorBrush(chosenRightOptionColor);
+                }
+                else if (!chosenButtonIndexes.Contains(index) && rightAnswersIndexes.Contains(index))
+                {
+                    optionButtons[index].Background = new SolidColorBrush(notChosenRightOptionColor);
+                }
+                else if (chosenButtonIndexes.Contains(index) && !rightAnswersIndexes.Contains(index))
+                {
+                    optionButtons[index].Background = new SolidColorBrush(chosenWrongOptionColor);
                 }
             }
         }
@@ -61,8 +97,14 @@ namespace UI.Pages
                 Name = $"option{index}",
                 Content = content
             };
-            button.Checked += OptionButtonChecked;
-            button.Unchecked += OptionButtonUnchecked;
+
+            if (!isResultPage)
+            {
+                button.Checked += OptionButtonChecked;
+                button.Unchecked += OptionButtonUnchecked;
+            }
+
+            optionButtons.Add(button);
 
             if (optionsGrid.Children.Count % 4 == 0)
             {
@@ -77,7 +119,7 @@ namespace UI.Pages
             var optionButton = sender as ToggleButton;
             optionButton.Background = SystemColors.ControlLightBrush;
 
-            var buttonIndex = Convert.ToInt32(optionButton.Name.Substring(optionButton.Name.Length - 1));
+            var buttonIndex = optionButtons.IndexOf(optionButton);
             Answer.Remove(buttonIndex);
 
             if (Answer.Count == 0)
@@ -89,9 +131,9 @@ namespace UI.Pages
         private void OptionButtonChecked(object sender, RoutedEventArgs e)
         {
             var optionButton = sender as ToggleButton;
-            optionButton.Background = SystemColors.ControlLightBrush;
+            optionButton.Background = new SolidColorBrush(chosenOptionColor);
 
-            var buttonIndex = Convert.ToInt32(optionButton.Name.Substring(optionButton.Name.Length - 1));
+            var buttonIndex = optionButtons.IndexOf(optionButton);
             Answer.Add(buttonIndex);
 
             IsAnswerChosen = true;

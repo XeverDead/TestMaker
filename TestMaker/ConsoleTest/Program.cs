@@ -13,7 +13,7 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            
+            Console.WriteLine(DateTime.Now.Date + DateTime.Now.TimeOfDay);
         }
     }
 }

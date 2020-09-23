@@ -13,6 +13,14 @@ namespace Lib.TaskTypes
             Options = new List<string>();
         }
 
-        public override double CountMark(dynamic answerIndex) => RightAnswerIndex == answerIndex ? Mark : 0.0;
+        public override double CountMark(dynamic answerIndex)
+        {
+            if (answerIndex.GetType() == RightAnswerIndex.GetType() && answerIndex == RightAnswerIndex) 
+            {
+                return Mark;
+            }
+
+            return 0.0;
+        }
     }
 }

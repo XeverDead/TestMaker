@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lib
+namespace Lib.TaskTypes
 {
     public abstract class Task
     {

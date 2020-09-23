@@ -1,4 +1,6 @@
-﻿namespace Lib.ResultTypes
+﻿using Lib.TaskTypes;
+
+namespace Lib.ResultTypes
 {
     public class TaskResult
     {

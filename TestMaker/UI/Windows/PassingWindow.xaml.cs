@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,6 +18,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UI.DialogWindows;
 using UI.Pages;
+using UI.Windows;
 
 namespace UI
 {
@@ -34,31 +34,44 @@ namespace UI
 
         private string studentName;
 
-        private List<Lib.Task> tasks;
+        private List<Task> tasks;
         private int currentTaskIndex;
 
         private List<TaskResult> results;
 
-        private Dictionary<Lib.Task, TreeViewItem> tasksTreeItems;
-        public PassingWindow()
+        private Dictionary<Task, TreeViewItem> tasksTreeItems;
+
+        private bool isShowingResults;
+        public PassingWindow(string testPath, string resultPath, bool isShowingResults)
         { 
             InitializeComponent();
 
-            studentName = GetStudentName();
+            this.isShowingResults = isShowingResults;
 
-            core = new DefaultPassingCore(new JsonDataProvider<Test>("D:\\Test"));
-            testView = core.GetTest();
+            core = new DefaultPassingCore(new JsonDataProvider<Test>(testPath), new JsonDataProvider<TestResult>(resultPath), isShowingResults);
 
-            tasks = new List<Lib.Task>(testView.TasksAndTopics.Keys);
-            currentTaskIndex = 0;
-
-            results = new List<TaskResult>();
-            foreach (var task in testView.TasksAndTopics.Keys)
+            if (isShowingResults)
             {
-                results.Add(new TaskResult(task, null));
+                results = core.GetResults();
             }
 
-            tasksTreeItems = new Dictionary<Lib.Task, TreeViewItem>();
+            testView = core.GetTest();
+
+            tasks = new List<Task>(testView.TasksAndTopics.Keys);
+            currentTaskIndex = 0;
+
+            if (!isShowingResults)
+            {
+                studentName = GetStudentName();
+
+                results = new List<TaskResult>();
+                foreach (var task in testView.TasksAndTopics.Keys)
+                {
+                    results.Add(new TaskResult(task, null));
+                }
+            }
+
+            tasksTreeItems = new Dictionary<Task, TreeViewItem>();
 
             prevButton.Click += PrevButtonClick;
             nextButton.Click += NextButtonClick;
@@ -119,7 +132,16 @@ namespace UI
 
         private void FinishButtonClick(object sender, RoutedEventArgs e)
         {
-            AskToMoveToResultScreen();
+            if (isShowingResults)
+            {
+                AskToMoveFromResultscreen();
+            }
+            else
+            {
+                SaveAnswer();
+
+                AskToMoveToResultScreen();
+            }
         }
 
         private void SetNewPage()
@@ -130,7 +152,17 @@ namespace UI
 
             if (tasks[currentTaskIndex] is SingleChoice scTask)
             {
-                if (results[currentTaskIndex].Answer != null)
+                if (isShowingResults)
+                {
+                    var answer = -1;
+                    if (results[currentTaskIndex].Answer != null)
+                    {
+                        answer = (int)results[currentTaskIndex].Answer;
+                    }
+
+                    currentPage = new SingleChoicePage(scTask, answer, scTask.RightAnswerIndex);
+                }
+                else if (results[currentTaskIndex].Answer != null)
                 {
                     currentPage = new SingleChoicePage(scTask, results[currentTaskIndex].Answer);
                 }
@@ -144,6 +176,10 @@ namespace UI
                 if (results[currentTaskIndex].Answer != null)
                 {
                     currentPage = new MultipleChoicePage(mcTask, results[currentTaskIndex].Answer);
+                }
+                else if (isShowingResults) 
+                {
+                    currentPage = new MultipleChoicePage(mcTask, results[currentTaskIndex].Answer, mcTask.RightAnswersIndexes);
                 }
                 else
                 {
@@ -165,27 +201,53 @@ namespace UI
             }
         }
     
-        private void AskToMoveToResultScreen()//Результаты показываются в заглушке просто для их контроля. Позже сделаю норм окно.
+        private void AskToMoveToResultScreen()
         {
             var result = MessageBox.Show("Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
 
             if (result == MessageBoxResult.Yes)
             {
                 core.SetMarksToResults(ref results, out double maxMark);
+                core.SaveResult(results, studentName);
 
                 var marks = new StringBuilder();
                 var totalMark = 0.0;
 
                 foreach (var taskResult in results)
                 {
-                    marks.Append(taskResult.Mark + " ");
                     totalMark += taskResult.Mark;
                 }
 
-                marks.Append("\n" + totalMark + " out of " + maxMark);
+                marks.Append("You've got " + totalMark + " out of " + maxMark + "points\nWould you like to check your answers?");
 
-                MessageBox.Show(marks.ToString());
+                if (MessageBox.Show(marks.ToString(), "Result", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
 
+                    isShowingResults = true;
+
+                    currentTaskIndex = 0;
+
+                    SetNewPage();
+                }
+                else
+                {
+                    var mainWindow = new MainWindow();
+
+                    mainWindow.Show();
+                    Close();
+                }
+            }
+        }
+
+        private void AskToMoveFromResultscreen()
+        {
+            var result = MessageBox.Show("Would you like to quit to main menu?", "Quit", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                var mainWindow = new MainWindow();
+
+                mainWindow.Show();
                 Close();
             }
         }
@@ -195,7 +257,7 @@ namespace UI
             var enterNameWindow = new TextInputWindow("Enter your name");
 
             enterNameWindow.ShowDialog();
-            return enterNameWindow.EnteredText;
+            return enterNameWindow.EnteredText;            
         }
 
         private void SetTestToTree()

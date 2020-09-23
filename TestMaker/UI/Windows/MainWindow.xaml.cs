@@ -23,17 +23,32 @@ namespace UI.Windows
 
             passButton.Click += PassButtonClick;
             redactButton.Click += RedactButtonClick;
+            viewResultsButton.Click += ViewResultsButtonClick;
             exitButton.Click += ExitButtonClick;
+        }
+
+        private void ViewResultsButtonClick(object sender, RoutedEventArgs e)
+        {
+            var passingWindow = new PassingWindow("D:\\Test", "D:\\Test", true);
+
+            passingWindow.Show();
+            Close();
         }
 
         private void PassButtonClick(object sender, RoutedEventArgs e)
         {
+            var passingWindow = new PassingWindow("D:\\Test", "D:\\Test", false);
 
+            passingWindow.Show();
+            Close();
         }
 
         private void RedactButtonClick(object sender, RoutedEventArgs e)
         {
+            var redactingWindow = new RedactingWindow("D:\\Test", false);
 
+            redactingWindow.Show();
+            Close();
         }
 
         private void ExitButtonClick(object sender, RoutedEventArgs e)

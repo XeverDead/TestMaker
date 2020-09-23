@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Lib.TaskTypes;
 using Newtonsoft.Json;
 
 namespace Lib
