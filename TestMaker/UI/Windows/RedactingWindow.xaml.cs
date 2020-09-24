@@ -13,6 +13,8 @@ using System.IO;
 using UI.DialogWindows;
 using System.Printing;
 using System.Security.Cryptography.Xml;
+using System.Net.Http.Headers;
+using System.Threading;
 
 namespace UI.Windows
 {
@@ -28,8 +30,27 @@ namespace UI.Windows
         {
             InitializeComponent();
 
-            core = new DefaultRedactingCore(new JsonDataProvider<Test>("D:\\Test"), isNewTest);
-            test = core.GetTest();
+            core = new DefaultRedactingCore(new JsonDataProvider<Test>(path), isNewTest);
+            test = core.GetTest(out bool wasTestLoaded);
+
+            if (isNewTest)
+            {
+                var testName = path.Substring(path.LastIndexOf('\\') + 1);
+                testName = testName[0..^4];
+
+                test.Name = testName;
+            }
+
+            if (!wasTestLoaded)
+            {
+                MessageBox.Show("Test file was corrupted. Returning to hub.");
+
+                var hubWindow = new HubWindow(TestActions.RedactTest);
+
+                hubWindow.Show();
+
+                Close();
+            }
 
             SetTestToTree();
 
@@ -44,7 +65,26 @@ namespace UI.Windows
             addTopicButton.Click += AddTopicButtonClick;
             removeButton.Click += RemoveButtonClick;
             renameButton.Click += RenameButtonClick;
+            declineChangesButton.Click += DeclineChangesButtonClick;
             finishButton.Click += FinishButtonClick;
+        }
+
+        private void DeclineChangesButtonClick(object sender, RoutedEventArgs e)
+        {
+            GoToMenuWithoitSaving();
+        }
+
+        private void GoToMenuWithoitSaving()
+        {
+            var result = MessageBox.Show("Would you like to decline changes and go to main menu?", "Decline changes", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                var mainWindow = new MainWindow();
+
+                Close();
+                mainWindow.Show();
+            }
         }
 
         private void RenameButtonClick(object sender, RoutedEventArgs e)

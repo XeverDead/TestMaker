@@ -10,17 +10,9 @@ namespace Lib
     {
         private readonly string path;
 
-        private Dictionary<Type, string> fileExtensions;
-
         public JsonDataProvider(string path)
         {
             this.path = path;
-
-            fileExtensions = new Dictionary<Type, string>()
-            {
-                [typeof(Test)] = ".tmt",
-                [typeof(TestResult)] = ".tmr"
-            };
         }
 
         private JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
@@ -31,7 +23,7 @@ namespace Lib
 
         public void Save(TData data)
         {
-            using (var writer = new StreamWriter($"{path}{fileExtensions[typeof(TData)]}"))
+            using (var writer = new StreamWriter($"{path}"))
             {
                 writer.WriteLine(JsonConvert.SerializeObject(data, serializerSettings));
             }
@@ -41,7 +33,7 @@ namespace Lib
         {
             TData data;
 
-            using (var reader = new StreamReader($"{path}{fileExtensions[typeof(TData)]}"))
+            using (var reader = new StreamReader($"{path}"))
             {
                 var text = reader.ReadToEnd();
                 data = JsonConvert.DeserializeObject<TData>(text, serializerSettings);

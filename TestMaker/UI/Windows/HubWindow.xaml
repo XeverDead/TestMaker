@@ -1,0 +1,23 @@
+﻿<Window x:Class="UI.Windows.HubWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UI.Windows"
+        mc:Ignorable="d"
+        Title="PassingHubWindow" Height="450" Width="800">
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="choosePathLabel" Grid.Row="0" Content="Choose file to open" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+        <ListBox x:Name="pathsList" Grid.Row="1"></ListBox>
+        <UniformGrid x:Name="buttonsGrid" Columns="3" Grid.Row="2">
+            <Button x:Name="backToMenuButton" Content="Return to menu"></Button>
+            <Button x:Name="choosePathButton" Content="Choose this file"></Button>
+            <Button x:Name="addNewTestButton" Content="Add new test"></Button>
+        </UniformGrid>
+    </Grid>
+</Window>

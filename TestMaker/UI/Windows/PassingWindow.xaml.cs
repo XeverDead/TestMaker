@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -42,7 +43,7 @@ namespace UI
         private Dictionary<Task, TreeViewItem> tasksTreeItems;
 
         private bool isShowingResults;
-        public PassingWindow(string testPath, string resultPath, bool isShowingResults)
+        public PassingWindow(string testPath, string resultPath, bool isShowingResults, string studentName)
         { 
             InitializeComponent();
 
@@ -52,17 +53,39 @@ namespace UI
 
             if (isShowingResults)
             {
-                results = core.GetResults();
+                results = core.GetResults(out bool wereResultsLoaded);
+
+                if (!wereResultsLoaded)
+                {
+                    MessageBox.Show("Result file was corrupted. Returning to hub.");
+
+                    var hubWindow = new HubWindow(TestActions.ViewResult);
+
+                    Close();
+
+                    hubWindow.Show();
+                }
             }
 
-            testView = core.GetTest();
+            testView = core.GetTest(out bool wasTestLoaded);
+
+            if (!wasTestLoaded)
+            {
+                MessageBox.Show("Test file was corrupted. Returning to hub.");
+
+                var hubWindow = new HubWindow(TestActions.PassTest);
+
+                Close();
+
+                hubWindow.Show();
+            }
 
             tasks = new List<Task>(testView.TasksAndTopics.Keys);
             currentTaskIndex = 0;
 
             if (!isShowingResults)
             {
-                studentName = GetStudentName();
+                this.studentName = studentName;
 
                 results = new List<TaskResult>();
                 foreach (var task in testView.TasksAndTopics.Keys)
@@ -250,14 +273,6 @@ namespace UI
                 mainWindow.Show();
                 Close();
             }
-        }
-
-        private string GetStudentName()
-        {
-            var enterNameWindow = new TextInputWindow("Enter your name");
-
-            enterNameWindow.ShowDialog();
-            return enterNameWindow.EnteredText;            
         }
 
         private void SetTestToTree()

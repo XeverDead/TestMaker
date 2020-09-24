@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lib;
+using Lib.ResultTypes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -17,6 +19,8 @@ namespace UI.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TestActions action;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,26 +33,31 @@ namespace UI.Windows
 
         private void ViewResultsButtonClick(object sender, RoutedEventArgs e)
         {
-            var passingWindow = new PassingWindow("D:\\Test", "D:\\Test", true);
+            action = TestActions.ViewResult;
 
-            passingWindow.Show();
-            Close();
+            MoveToHub();
         }
 
         private void PassButtonClick(object sender, RoutedEventArgs e)
         {
-            var passingWindow = new PassingWindow("D:\\Test", "D:\\Test", false);
+            action = TestActions.PassTest;
 
-            passingWindow.Show();
-            Close();
+            MoveToHub();
         }
 
         private void RedactButtonClick(object sender, RoutedEventArgs e)
         {
-            var redactingWindow = new RedactingWindow("D:\\Test", false);
+            action = TestActions.RedactTest;
 
-            redactingWindow.Show();
+            MoveToHub();
+        }
+
+        private void MoveToHub()
+        {
+            var hubWindow = new HubWindow(action);
+
             Close();
+            hubWindow.Show();
         }
 
         private void ExitButtonClick(object sender, RoutedEventArgs e)

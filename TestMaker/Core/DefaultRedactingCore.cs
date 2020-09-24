@@ -12,9 +12,17 @@ namespace Core
         private Test test;
         private IDataProvider<Test> testProvider;
 
+        private bool isNewTest;
+
         public DefaultRedactingCore(IDataProvider<Test> testProvider, bool isNewTest)
         {
             this.testProvider = testProvider;
+            this.isNewTest = isNewTest;
+        }
+
+        public Test GetTest(out bool wasTestLoaded)
+        {
+            wasTestLoaded = true;
 
             if (isNewTest)
             {
@@ -22,12 +30,16 @@ namespace Core
             }
             else
             {
-                test = testProvider.Load();
+                try
+                {
+                    test = testProvider.Load();
+                }
+                catch
+                {
+                    wasTestLoaded = false;
+                }
             }
-        }
 
-        public Test GetTest()
-        {
             return test;
         }
 

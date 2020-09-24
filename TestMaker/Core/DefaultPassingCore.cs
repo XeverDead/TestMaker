@@ -23,20 +23,36 @@ namespace Core
             this.isForShowingResults = isForShowingResults;
         }
 
-        public TaskTopicTestView GetTest()
+        public TaskTopicTestView GetTest(out bool wasTestLoaded)
         {
+            wasTestLoaded = true;
+
             if (isForShowingResults)
             {
                 if (testResult == null)
                 {
-                    GetResults();
-                }
+                    GetResults(out bool wereResultsLoaded);
+
+                    wasTestLoaded = wereResultsLoaded;
+                }              
 
                 test = testResult.Test;
             }
             else
             {
-                test = testProvider.Load();
+                try
+                {
+                    test = testProvider.Load();
+                }
+                catch
+                {
+                    wasTestLoaded = false;
+                }
+            }
+
+            if (!wasTestLoaded)
+            {
+                return null;
             }
 
             var tasksAndTopics = new Dictionary<Task, Topic>();
@@ -126,9 +142,20 @@ namespace Core
             resultProvider.Save(testResult);
         }
 
-        public List<TaskResult> GetResults()
+        public List<TaskResult> GetResults(out bool wereResultsLoaded)
         {
-            testResult = resultProvider.Load();
+            wereResultsLoaded = true;
+
+            try
+            {
+                testResult = resultProvider.Load();
+            }
+            catch
+            {
+                wereResultsLoaded = false;
+
+                return null;
+            }
 
             return testResult.TaskResults;
         }
