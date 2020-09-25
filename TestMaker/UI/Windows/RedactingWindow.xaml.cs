@@ -18,13 +18,12 @@ using System.Threading;
 
 namespace UI.Windows
 {
-    /// <summary>
-    /// Логика взаимодействия для RedactingWindow.xaml
-    /// </summary>
     public partial class RedactingWindow : Window
     {
         private DefaultRedactingCore core;
         private Test test;
+
+        public bool IsLoadedProperely { get; private set; }
 
         public RedactingWindow(string path, bool isNewTest)
         {
@@ -32,6 +31,8 @@ namespace UI.Windows
 
             core = new DefaultRedactingCore(new JsonDataProvider<Test>(path), isNewTest);
             test = core.GetTest(out bool wasTestLoaded);
+
+            IsLoadedProperely = wasTestLoaded;
 
             if (isNewTest)
             {
@@ -45,28 +46,30 @@ namespace UI.Windows
             {
                 MessageBox.Show("Test file was corrupted. Returning to hub.");
 
-                var hubWindow = new HubWindow(TestActions.RedactTest);
+                //var hubWindow = new HubWindow(TestActions.RedactTest);
 
-                hubWindow.Show();
+                //hubWindow.Show();
 
                 Close();
             }
+            else
+            {
+                SetTestToTree();
 
-            SetTestToTree();
+                testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
 
-            testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
+                addTaskButton.IsEnabled = false;
+                addTopicButton.IsEnabled = false;
+                removeButton.IsEnabled = false;
+                renameButton.IsEnabled = false;
 
-            addTaskButton.IsEnabled = false;
-            addTopicButton.IsEnabled = false;
-            removeButton.IsEnabled = false;
-            renameButton.IsEnabled = false;
-
-            addTaskButton.Click += AddTaskButtonClick;
-            addTopicButton.Click += AddTopicButtonClick;
-            removeButton.Click += RemoveButtonClick;
-            renameButton.Click += RenameButtonClick;
-            declineChangesButton.Click += DeclineChangesButtonClick;
-            finishButton.Click += FinishButtonClick;
+                addTaskButton.Click += AddTaskButtonClick;
+                addTopicButton.Click += AddTopicButtonClick;
+                removeButton.Click += RemoveButtonClick;
+                renameButton.Click += RenameButtonClick;
+                declineChangesButton.Click += DeclineChangesButtonClick;
+                finishButton.Click += FinishButtonClick;
+            }
         }
 
         private void DeclineChangesButtonClick(object sender, RoutedEventArgs e)

@@ -110,8 +110,11 @@ namespace UI.Windows
 
                     var passingWindow = new PassingWindow(testPath, $"Tests\\{testDirectory}\\{studentName}.tmr", false, studentName);
 
-                    Close();
-                    passingWindow.Show();
+                    if (passingWindow.IsLoadedProperely)
+                    {
+                        passingWindow.Show();
+                        Close();
+                    }
                 }
             }
         }
@@ -126,8 +129,11 @@ namespace UI.Windows
                 
                 var resultWindow = new PassingWindow(resultPath, resultPath, true, null);
 
-                Close();
-                resultWindow.Show();
+                if (resultWindow.IsLoadedProperely)
+                {
+                    resultWindow.Show();
+                    Close();
+                }
             }
         }
 
@@ -141,8 +147,11 @@ namespace UI.Windows
 
                 var redactingWindow = new RedactingWindow(resultPath, false);
 
-                Close();
-                redactingWindow.Show();
+                if (redactingWindow.IsLoadedProperely)
+                {
+                    redactingWindow.Show();
+                    Close();
+                }
             }
         }
 
@@ -158,8 +167,8 @@ namespace UI.Windows
                 var pathToTest = $"Tests\\{testName}\\{testName}.tmt";
                 var redactingWindow = new RedactingWindow(pathToTest, true);
 
-                Close();
                 redactingWindow.Show();
+                Close();
             }
         }
     }

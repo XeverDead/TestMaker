@@ -41,17 +41,47 @@ namespace UI.Pages
             setQuestionButton.Click += SetQuestionButtonClick;
             setOptionButton.Click += SetOptionButtonClick;
             deleteOptionButton.Click += DeleteOptionButtonClick;
+            setMarkButton.Click += SetMarkButtonClick;
 
             optionTextBox.TextChanged += OptionTextBoxTextChanged;
             questionTextBox.TextChanged += QuestionTextBoxTextChanged;
+            markTextBox.TextChanged += MarkTextBoxTextChanged;
 
             optionsList.SelectionChanged += OptionsListSelectionChanged;
             rightOptionSelector.SelectionChanged += RightOptionSelectorSelectionChanged;
 
             setQuestionButton.IsEnabled = false;
             setOptionButton.IsEnabled = false;
+            setMarkButton.IsEnabled = false;
 
             optionsList.SelectedIndex = 0;
+        }
+
+        private void MarkTextBoxTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (int.TryParse(markTextBox.Text, out _))
+            {
+                setMarkButton.IsEnabled = true;
+            }
+            else
+            {
+                setMarkButton.IsEnabled = false;
+            }
+        }
+
+        private void SetMarkButtonClick(object sender, RoutedEventArgs e)
+        {
+            SetMark();
+
+            setMarkButton.IsEnabled = false;
+        }
+
+        private void SetMark()
+        {
+            if (int.TryParse(markTextBox.Text, out int mark))
+            {
+                task.Mark = mark;
+            }
         }
 
         private void QuestionTextBoxTextChanged(object sender, TextChangedEventArgs e)

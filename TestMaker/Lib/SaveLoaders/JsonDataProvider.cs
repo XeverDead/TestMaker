@@ -39,6 +39,11 @@ namespace Lib
                 data = JsonConvert.DeserializeObject<TData>(text, serializerSettings);
             }
 
+            if (data == null)
+            {
+                throw new FileLoadException("File corrupted");
+            }
+
             return data;
         }
     }

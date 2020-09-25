@@ -25,7 +25,7 @@ namespace Lib.SaveLoaders
             {
                 var pathsList = new List<string>();
 
-                var directory = new DirectoryInfo("D:\\Tests");
+                var directory = new DirectoryInfo("Tests");
 
                 foreach (var subDirectory in directory.GetDirectories())
                 {

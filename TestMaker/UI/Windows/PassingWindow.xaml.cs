@@ -28,6 +28,8 @@ namespace UI
     /// </summary>
     public partial class PassingWindow : Window
     {
+        public bool IsLoadedProperely { get; private set; }
+
         private readonly DefaultPassingCore core;
         private TaskTopicTestView testView;
 
@@ -55,6 +57,8 @@ namespace UI
             {
                 results = core.GetResults(out bool wereResultsLoaded);
 
+                IsLoadedProperely = wereResultsLoaded;
+
                 if (!wereResultsLoaded)
                 {
                     MessageBox.Show("Result file was corrupted. Returning to hub.");
@@ -62,12 +66,12 @@ namespace UI
                     var hubWindow = new HubWindow(TestActions.ViewResult);
 
                     Close();
-
-                    hubWindow.Show();
                 }
             }
 
             testView = core.GetTest(out bool wasTestLoaded);
+
+            IsLoadedProperely = wasTestLoaded;
 
             if (!wasTestLoaded)
             {
@@ -76,35 +80,35 @@ namespace UI
                 var hubWindow = new HubWindow(TestActions.PassTest);
 
                 Close();
-
-                hubWindow.Show();
             }
-
-            tasks = new List<Task>(testView.TasksAndTopics.Keys);
-            currentTaskIndex = 0;
-
-            if (!isShowingResults)
+            else
             {
-                this.studentName = studentName;
+                tasks = new List<Task>(testView.TasksAndTopics.Keys);
+                currentTaskIndex = 0;
 
-                results = new List<TaskResult>();
-                foreach (var task in testView.TasksAndTopics.Keys)
+                if (!isShowingResults)
                 {
-                    results.Add(new TaskResult(task, null));
+                    this.studentName = studentName;
+
+                    results = new List<TaskResult>();
+                    foreach (var task in testView.TasksAndTopics.Keys)
+                    {
+                        results.Add(new TaskResult(task, null));
+                    }
                 }
+
+                tasksTreeItems = new Dictionary<Task, TreeViewItem>();
+
+                prevButton.Click += PrevButtonClick;
+                nextButton.Click += NextButtonClick;
+                finishButton.Click += FinishButtonClick;
+
+                testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
+
+                SetTestToTree();
+
+                SetNewPage();
             }
-
-            tasksTreeItems = new Dictionary<Task, TreeViewItem>();
-
-            prevButton.Click += PrevButtonClick;
-            nextButton.Click += NextButtonClick;
-            finishButton.Click += FinishButtonClick;
-
-            testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
-
-            SetTestToTree();
-
-            SetNewPage();
         }
 
         private void TestTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
