@@ -101,11 +101,14 @@ namespace UI
 
                 tasksTreeItems = new Dictionary<Task, TreeViewItem>();
 
+                setQuestionButton.Click += SetQuestionButtonClick;
                 prevButton.Click += PrevButtonClick;
                 nextButton.Click += NextButtonClick;
                 finishButton.Click += FinishButtonClick;
 
                 testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
+
+                setQuestionButton.IsEnabled = false;
 
                 SetTestToTree();
                 SetNewPage();
@@ -115,6 +118,15 @@ namespace UI
                     SetTime();
                 }
             }
+        }
+
+        private void SetQuestionButtonClick(object sender, RoutedEventArgs e)
+        {
+            var currentItem = testTree.SelectedItem as TreeViewItem;
+
+            currentTaskIndex = tasks.IndexOf(currentItem.Header as Task);
+
+            SetNewPage();
         }
 
         private void TestTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -130,6 +142,17 @@ namespace UI
                 currentdItem.IsExpanded = true;
 
                 condition = currentdItem.Parent is TreeViewItem;
+            }
+
+            currentdItem = testTree.SelectedItem as TreeViewItem;
+
+            if (currentdItem.Header is Task)
+            {
+                setQuestionButton.IsEnabled = true;
+            }
+            else
+            {
+                setQuestionButton.IsEnabled = false;
             }
         }
 

@@ -40,5 +40,6 @@
         <Grid x:Name="treeGrid"  Grid.Column ="2" Grid.RowSpan="2">
             <TreeView x:Name="testTree"></TreeView>
         </Grid>
+        <Button x:Name="setQuestionButton" Content="Choose question" Grid.Row="2" Grid.Column="2"></Button>
     </Grid>
 </Window>
