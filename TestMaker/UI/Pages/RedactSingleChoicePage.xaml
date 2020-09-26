@@ -8,23 +8,23 @@
       d:DesignHeight="500" d:DesignWidth="800"
       Title="RedactSingleChoicePage">
 
-    <Grid x:Name="mainGrid">
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="1.5*"/>
             <RowDefinition Height="0.5*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="questionGrid" Grid.Row="0">
+        <Grid x:Name="QuestionGrid" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock x:Name="questionBlockHeader" Text="Enter task question" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-            <TextBox x:Name="questionTextBox" Grid.Row="1"></TextBox>
-            <Button x:Name="setQuestionButton" Content="Set question" Grid.Row="2"></Button>
+            <TextBlock x:Name="QuestionBlockHeader" Text="Enter task question" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+            <TextBox x:Name="QuestionTextBox" Grid.Row="1"></TextBox>
+            <Button x:Name="SetQuestionButton" Content="Set question" Grid.Row="2"></Button>
         </Grid>
-        <Grid x:Name="optionGrid" Grid.Row="1">
+        <Grid x:Name="OptionGrid" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1.2*" />
                 <RowDefinition Height="0.8*"/>
@@ -33,25 +33,25 @@
                 <RowDefinition Height="1.2*"/>
                 <RowDefinition Height="0.8*"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="optionBlockHeader" Text ="Select options from the list and enter its text" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-            <ComboBox x:Name="optionsList" Text="Select option" Grid.Row="1"></ComboBox>
-            <TextBox x:Name="optionTextBox" Grid.Row="2"></TextBox>
-            <UniformGrid x:Name="optionButtonsGrid" Columns="2" Grid.Row="3">
-                <Button x:Name="setOptionButton" Content="Set option"></Button>
-                <Button x:Name="deleteOptionButton" Content="Delete option"></Button>
+            <TextBlock x:Name="OptionBlockHeader" Text ="Select options from the list and enter its text" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+            <ComboBox x:Name="OptionsList" Text="Select option" Grid.Row="1"></ComboBox>
+            <TextBox x:Name="OptionTextBox" Grid.Row="2"></TextBox>
+            <UniformGrid x:Name="OptionButtonsGrid" Columns="2" Grid.Row="3">
+                <Button x:Name="SetOptionButton" Content="Set option"></Button>
+                <Button x:Name="DeleteOptionButton" Content="Delete option"></Button>
             </UniformGrid>
-            <TextBlock x:Name="rightOptionHeader" Text ="Select right answer" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-            <ComboBox x:Name="rightOptionSelector" Grid.Row="5"></ComboBox>
+            <TextBlock x:Name="RightOptionHeader" Text ="Select right answer" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+            <ComboBox x:Name="RightOptionSelector" Grid.Row="5"></ComboBox>
         </Grid>
-        <Grid x:Name="markGrid" Grid.Row="2">
+        <Grid x:Name="MarkGrid" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <TextBlock x:Name="markHeader" Text="Enter mark for right answer" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-            <TextBox x:Name="markTextBox" Grid.Row="1"></TextBox>
-            <Button x:Name="setMarkButton" Grid.Row="2" Content="Set mark"></Button>
+            <TextBlock x:Name="MarkHeader" Text="Enter mark for right answer" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+            <TextBox x:Name="MarkTextBox" Grid.Row="1"></TextBox>
+            <Button x:Name="SetMarkButton" Grid.Row="2" Content="Set mark"></Button>
         </Grid>
     </Grid>
 </Page>

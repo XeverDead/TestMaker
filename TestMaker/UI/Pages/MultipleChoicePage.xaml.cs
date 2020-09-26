@@ -1,37 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Lib;
 using Lib.TaskTypes;
 
 namespace UI.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для MultipleChoicePage.xaml
-    /// </summary>
     public partial class MultipleChoicePage : Page, ITaskPage
     {
-        private Color chosenOptionColor = Color.FromArgb(200, 200, 200, 0);
-        private Color chosenRightOptionColor = Color.FromArgb(200, 0, 200, 0);
-        private Color chosenWrongOptionColor = Color.FromArgb(255, 255, 0, 0);
-        private Color notChosenRightOptionColor = Color.FromArgb(200, 100, 0, 200);
+        private readonly Color chosenOptionColor = Color.FromArgb(200, 200, 200, 0);
+        private readonly Color chosenRightOptionColor = Color.FromArgb(200, 0, 200, 0);
+        private readonly Color chosenWrongOptionColor = Color.FromArgb(255, 255, 0, 0);
+        private readonly Color notChosenRightOptionColor = Color.FromArgb(200, 100, 0, 200);
 
         public dynamic Answer { get; protected set; }
         public bool IsAnswerChosen { get; protected set; }
 
-        private List<ToggleButton> optionButtons;
+        private readonly List<ToggleButton> optionButtons;
 
-        private bool isResultPage;
+        private readonly bool isResultPage;
 
         public MultipleChoicePage(MultipleChoice task)
         {
@@ -41,12 +29,14 @@ namespace UI.Pages
 
             isResultPage = false;
 
-            questionBlock.Text = task.Question;
+            QuestionBlock.Text = task.Question;
 
             for (var optionNum = 0; optionNum < task.Options.Count; optionNum++)
             {
                 AddOption(optionNum, task.Options[optionNum]);
             }
+
+            Answer = new List<int>();
         }
 
         public MultipleChoicePage(MultipleChoice task, List<int> chosenButtonIndexes)
@@ -66,7 +56,7 @@ namespace UI.Pages
 
             isResultPage = true;
 
-            questionBlock.Text = task.Question;
+            QuestionBlock.Text = task.Question;
 
             for (var optionNum = 0; optionNum < task.Options.Count; optionNum++)
             {
@@ -88,6 +78,8 @@ namespace UI.Pages
                     optionButtons[index].Background = new SolidColorBrush(chosenWrongOptionColor);
                 }
             }
+
+            Answer = new List<int>();
         }
 
         private void AddOption(int index, string content)
@@ -106,12 +98,12 @@ namespace UI.Pages
 
             optionButtons.Add(button);
 
-            if (optionsGrid.Children.Count % 4 == 0)
+            if (OptionsGrid.Children.Count % 4 == 0)
             {
-                optionsGrid.Rows++;
+                OptionsGrid.Rows++;
             }
 
-            optionsGrid.Children.Add(button);
+            OptionsGrid.Children.Add(button);
         }
 
         private void OptionButtonUnchecked(object sender, RoutedEventArgs e)

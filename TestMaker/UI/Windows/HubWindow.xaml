@@ -6,18 +6,18 @@
         xmlns:local="clr-namespace:UI.Windows"
         mc:Ignorable="d"
         Title="PassingHubWindow" Height="450" Width="800">
-    <Grid x:Name="mainGrid">
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="10*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Label x:Name="choosePathLabel" Grid.Row="0" Content="Choose file to open" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
-        <ListBox x:Name="pathsList" Grid.Row="1"></ListBox>
-        <UniformGrid x:Name="buttonsGrid" Columns="3" Grid.Row="2">
-            <Button x:Name="backToMenuButton" Content="Return to menu"></Button>
-            <Button x:Name="choosePathButton" Content="Choose this file"></Button>
-            <Button x:Name="addNewTestButton" Content="Add new test"></Button>
+        <Label x:Name="ChoosePathLabel" Grid.Row="0" Content="Choose file to open" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+        <ListBox x:Name="PathsList" Grid.Row="1"></ListBox>
+        <UniformGrid x:Name="ButtonsGrid" Columns="3" Grid.Row="2">
+            <Button x:Name="BackToMenuButton" Content="Return to menu"></Button>
+            <Button x:Name="ChoosePathButton" Content="Choose this file"></Button>
+            <Button x:Name="AddNewTestButton" Content="Add new test"></Button>
         </UniformGrid>
     </Grid>
 </Window>

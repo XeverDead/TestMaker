@@ -1,6 +1,4 @@
-﻿using Lib;
-
-namespace UI.Pages
+﻿namespace UI.Pages
 {
     public interface ITaskPage
     {

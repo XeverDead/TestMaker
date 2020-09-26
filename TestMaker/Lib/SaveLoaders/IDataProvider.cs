@@ -1,6 +1,4 @@
-﻿using Lib.ResultTypes;
-
-namespace Lib
+﻿namespace Lib.SaveLoaders
 {
     public interface IDataProvider<TData>
     {

@@ -1,49 +1,36 @@
-﻿using Core;
-using Lib;
-using Lib.ResultTypes;
-using Lib.TaskTypes;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
+using Core;
+using Lib;
+using Lib.ResultTypes;
+using Lib.SaveLoaders;
+using Lib.TaskTypes;
 using UI.DialogWindows;
 using UI.Pages;
-using UI.Windows;
 
-namespace UI
+namespace UI.Windows
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class PassingWindow : Window
     {
-        public bool IsLoadedProperely { get; private set; }
+        public bool IsLoadedProperly { get; }
 
         private readonly DefaultPassingCore core;
-        private TaskTopicTestView testView;
+        private readonly TaskTopicTestView testView;
 
         private ITaskPage currentPage;
 
-        private string studentName;
+        private readonly string studentName;
 
-        private List<Task> tasks;
+        private readonly List<Task> tasks;
         private int currentTaskIndex;
 
         private List<TaskResult> results;
 
-        private Dictionary<Task, TreeViewItem> tasksTreeItems;
+        private readonly Dictionary<Task, TreeViewItem> tasksTreeItems;
 
         private bool isShowingResults;
 
@@ -53,7 +40,7 @@ namespace UI
         { 
             InitializeComponent();
 
-            IsLoadedProperely = true;
+            IsLoadedProperly = true;
 
             this.isShowingResults = isShowingResults;
 
@@ -63,7 +50,7 @@ namespace UI
             {
                 results = core.GetResults(out bool wereResultsLoaded);
 
-                IsLoadedProperely = wereResultsLoaded;
+                IsLoadedProperly = wereResultsLoaded;
 
                 if (!wereResultsLoaded)
                 {
@@ -75,16 +62,32 @@ namespace UI
 
             testView = core.GetTest(out bool wasTestLoaded);
 
-            if (!wasTestLoaded && IsLoadedProperely)
+            if (!wasTestLoaded && IsLoadedProperly)
             {
-                IsLoadedProperely = wasTestLoaded;
+                IsLoadedProperly = wasTestLoaded;
 
                 MessageBox.Show("Test file was corrupted. Returning to hub.");
 
                 Close();
             }
-            else if (wasTestLoaded) 
+            else if (wasTestLoaded)
             {
+                if (testView.Test.HasPassword && isShowingResults)
+                {
+                    var passwordWindow = new TextInputWindow("Enter password");
+
+                    passwordWindow.ShowDialog();
+
+                    if (!passwordWindow.EnteredText.Equals(testView.Test.Password))
+                    {
+                        IsLoadedProperly = false;
+
+                        MessageBox.Show("Password is wrong. Returning to hub.");
+
+                        Close();
+                    }
+                }
+
                 tasks = new List<Task>(testView.TasksAndTopics.Keys);
                 currentTaskIndex = 0;
 
@@ -101,14 +104,14 @@ namespace UI
 
                 tasksTreeItems = new Dictionary<Task, TreeViewItem>();
 
-                setQuestionButton.Click += SetQuestionButtonClick;
-                prevButton.Click += PrevButtonClick;
-                nextButton.Click += NextButtonClick;
-                finishButton.Click += FinishButtonClick;
+                SetQuestionButton.Click += SetQuestionButtonClick;
+                PrevButton.Click += PrevButtonClick;
+                NextButton.Click += NextButtonClick;
+                FinishButton.Click += FinishButtonClick;
 
-                testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
+                TestTree.SelectedItemChanged += TestTreeSelectedItemChanged;
 
-                setQuestionButton.IsEnabled = false;
+                SetQuestionButton.IsEnabled = false;
 
                 SetTestToTree();
                 SetNewPage();
@@ -122,7 +125,7 @@ namespace UI
 
         private void SetQuestionButtonClick(object sender, RoutedEventArgs e)
         {
-            var currentItem = testTree.SelectedItem as TreeViewItem;
+            var currentItem = TestTree.SelectedItem as TreeViewItem;
 
             currentTaskIndex = tasks.IndexOf(currentItem.Header as Task);
 
@@ -131,29 +134,22 @@ namespace UI
 
         private void TestTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var currentdItem = testTree.SelectedItem as TreeViewItem;
+            var currentItem = TestTree.SelectedItem as TreeViewItem;
 
-            var condition = currentdItem.Parent is TreeViewItem;
+            var condition = currentItem.Parent is TreeViewItem;
 
             while (condition)
             {
-                currentdItem = currentdItem.Parent as TreeViewItem;
+                currentItem = currentItem.Parent as TreeViewItem;
 
-                currentdItem.IsExpanded = true;
+                currentItem.IsExpanded = true;
 
-                condition = currentdItem.Parent is TreeViewItem;
+                condition = currentItem.Parent is TreeViewItem;
             }
 
-            currentdItem = testTree.SelectedItem as TreeViewItem;
+            currentItem = TestTree.SelectedItem as TreeViewItem;
 
-            if (currentdItem.Header is Task)
-            {
-                setQuestionButton.IsEnabled = true;
-            }
-            else
-            {
-                setQuestionButton.IsEnabled = false;
-            }
+            SetQuestionButton.IsEnabled = currentItem.Header is Task;
         }
 
         private void NextButtonClick(object sender, RoutedEventArgs e)
@@ -190,7 +186,7 @@ namespace UI
         {
             if (isShowingResults)
             {
-                AskToMoveFromResultscreen();
+                AskToMoveFromResultScreen();
             }
             else
             {
@@ -202,7 +198,7 @@ namespace UI
 
         private void SetNewPage()
         {
-            taskGrid.Children.Clear();
+            TaskGrid.Children.Clear();
 
             tasksTreeItems[tasks[currentTaskIndex]].IsSelected = true;
 
@@ -246,7 +242,7 @@ namespace UI
             var pageGrid = currentPage.Content as Grid;
             currentPage.Content = null;
 
-            taskGrid.Children.Add(pageGrid);
+            TaskGrid.Children.Add(pageGrid);
         }
 
         private void SaveAnswer()
@@ -292,7 +288,7 @@ namespace UI
 
                 if (MessageBox.Show(marks.ToString(), "Result", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    timeViewer.Text = "Watch results as long as you want";
+                    TimeViewer.Text = "Watch results as long as you want";
 
                     isShowingResults = true;
 
@@ -310,7 +306,7 @@ namespace UI
             }
         }
 
-        private void AskToMoveFromResultscreen()
+        private void AskToMoveFromResultScreen()
         {
             var result = MessageBox.Show("Would you like to quit to main menu?", "Quit", MessageBoxButton.YesNo);
 
@@ -326,7 +322,7 @@ namespace UI
         private void SetTestToTree()
         {
             var headItem = new TreeViewItem() { Header = testView.Test };
-            testTree.Items.Add(headItem);
+            TestTree.Items.Add(headItem);
 
             foreach (var topic in testView.Test.Topics)
             {
@@ -370,7 +366,7 @@ namespace UI
             if (testView.Test.IsTimeLimited)
             {
                 timeLeft = testView.Test.Time;
-                timeViewer.Text = $"Time left: {timeLeft} seconds";
+                TimeViewer.Text = $"Time left: {timeLeft} seconds";
 
                 timer = new DispatcherTimer(DispatcherPriority.Send)
                 {
@@ -382,13 +378,13 @@ namespace UI
             }
             else
             {
-                timeViewer.Text = $"Time unlimited";
+                TimeViewer.Text = $"Time unlimited";
             }
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-            timeViewer.Text = $"Time left: {--timeLeft} seconds";
+            TimeViewer.Text = $"Time left: {--timeLeft} seconds";
 
             if (timeLeft <= 0)
             {

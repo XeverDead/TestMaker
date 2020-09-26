@@ -2,6 +2,7 @@
 using Lib.ResultTypes;
 using Lib.TaskTypes;
 using System.Collections.Generic;
+using Lib.SaveLoaders;
 
 namespace Core
 {
@@ -10,10 +11,10 @@ namespace Core
         private Test test;
         private TestResult testResult;
 
-        private IDataProvider<Test> testProvider;
-        private IDataProvider<TestResult> resultProvider;
+        private readonly IDataProvider<Test> testProvider;
+        private readonly IDataProvider<TestResult> resultProvider;
 
-        private bool isForShowingResults;
+        private readonly bool isForShowingResults;
 
         public DefaultPassingCore(IDataProvider<Test> testProvider, IDataProvider<TestResult> resultProvider, bool isForShowingResults)
         {
@@ -107,7 +108,6 @@ namespace Core
 
         public void SetMarksToResults(ref List<TaskResult> results, out double maxMark)
         {
-            var mark = 0.0;
             maxMark = 0.0;
 
             foreach (var result in results)
@@ -122,8 +122,6 @@ namespace Core
 
                 var taskMark = result.Task.CountMark(result.Answer);
                 result.Mark = taskMark;
-
-                mark += taskMark;
             }
         }
 

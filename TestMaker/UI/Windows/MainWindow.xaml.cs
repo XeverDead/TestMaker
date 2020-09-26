@@ -1,22 +1,7 @@
-﻿using Lib;
-using Lib.ResultTypes;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace UI.Windows
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private TestActions action;
@@ -25,10 +10,10 @@ namespace UI.Windows
         {
             InitializeComponent();
 
-            passButton.Click += PassButtonClick;
-            redactButton.Click += RedactButtonClick;
-            viewResultsButton.Click += ViewResultsButtonClick;
-            exitButton.Click += ExitButtonClick;
+            PassButton.Click += PassButtonClick;
+            RedactButton.Click += RedactButtonClick;
+            ViewResultsButton.Click += ViewResultsButtonClick;
+            ExitButton.Click += ExitButtonClick;
         }
 
         private void ViewResultsButtonClick(object sender, RoutedEventArgs e)

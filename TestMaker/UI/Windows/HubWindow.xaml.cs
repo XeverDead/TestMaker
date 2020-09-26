@@ -1,11 +1,9 @@
 ﻿using Core;
 using Lib;
 using Lib.ResultTypes;
-using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using UI.DialogWindows;
 
 namespace UI.Windows
@@ -19,8 +17,8 @@ namespace UI.Windows
 
     public partial class HubWindow : Window
     {
-        private List<string> filePaths;
-        private TestActions action;
+        private readonly List<string> filePaths;
+        private readonly TestActions action;
 
         public HubWindow(TestActions action)
         {
@@ -41,20 +39,20 @@ namespace UI.Windows
 
             foreach (var filePath in filePaths)
             {
-                pathsList.Items.Add(new ListBoxItem() { Content = filePath.Substring(filePath.LastIndexOf('\\') + 1) });
+                PathsList.Items.Add(new ListBoxItem() { Content = filePath.Substring(filePath.LastIndexOf('\\') + 1) });
             }
 
-            choosePathButton.Click += ChoosePathButtonClick;
-            addNewTestButton.Click += AddNewTestButtonClick;
-            backToMenuButton.Click += BackToMenuButtonClick;
+            ChoosePathButton.Click += ChoosePathButtonClick;
+            AddNewTestButton.Click += AddNewTestButtonClick;
+            BackToMenuButton.Click += BackToMenuButtonClick;
 
-            pathsList.SelectionChanged += PathsListSelectionChanged;
+            PathsList.SelectionChanged += PathsListSelectionChanged;
 
-            choosePathButton.IsEnabled = false;
+            ChoosePathButton.IsEnabled = false;
 
-            if (!(action == TestActions.RedactTest))
+            if (action != TestActions.RedactTest)
             {
-                addNewTestButton.IsEnabled = false;
+                AddNewTestButton.IsEnabled = false;
             }
         }
 
@@ -73,7 +71,7 @@ namespace UI.Windows
 
         private void PathsListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            choosePathButton.IsEnabled = true;
+            ChoosePathButton.IsEnabled = true;
         }
 
         private void ChoosePathButtonClick(object sender, RoutedEventArgs e)
@@ -105,12 +103,12 @@ namespace UI.Windows
                 {
                     var studentName = textInputWindow.EnteredText;
 
-                    var testPath = filePaths[pathsList.SelectedIndex];
+                    var testPath = filePaths[PathsList.SelectedIndex];
                     var testDirectory = testPath.Substring(0, testPath.LastIndexOf('\\'));
 
                     var passingWindow = new PassingWindow(testPath, $"{testDirectory}\\Results\\{studentName}.tmr", false, studentName);
 
-                    if (passingWindow.IsLoadedProperely)
+                    if (passingWindow.IsLoadedProperly)
                     {
                         passingWindow.Show();
                         Close();
@@ -125,11 +123,11 @@ namespace UI.Windows
 
             if (result == MessageBoxResult.Yes)
             {
-                var resultPath = filePaths[pathsList.SelectedIndex];
+                var resultPath = filePaths[PathsList.SelectedIndex];
                 
                 var resultWindow = new PassingWindow(resultPath, resultPath, true, null);
 
-                if (resultWindow.IsLoadedProperely)
+                if (resultWindow.IsLoadedProperly)
                 {
                     resultWindow.Show();
                     Close();
@@ -143,11 +141,11 @@ namespace UI.Windows
 
             if (result == MessageBoxResult.Yes)
             {
-                var resultPath = filePaths[pathsList.SelectedIndex];
+                var resultPath = filePaths[PathsList.SelectedIndex];
 
                 var redactingWindow = new RedactingWindow(resultPath, false);
 
-                if (redactingWindow.IsLoadedProperely)
+                if (redactingWindow.IsLoadedProperly)
                 {
                     redactingWindow.Show();
                     Close();

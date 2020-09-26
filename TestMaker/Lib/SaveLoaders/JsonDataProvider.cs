@@ -1,10 +1,7 @@
-﻿using Lib.ResultTypes;
+﻿using System.IO;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
-namespace Lib
+namespace Lib.SaveLoaders
 {
     public class JsonDataProvider<TData>: IDataProvider<TData>
     {
@@ -15,7 +12,7 @@ namespace Lib
             this.path = path;
         }
 
-        private JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
+        private readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.Auto,
             Formatting = Formatting.Indented

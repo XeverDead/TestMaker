@@ -3,16 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using Lib.SaveLoaders;
 
 namespace Core
 {
     public class DefaultRedactingCore
     {
         private Test test;
-        private IDataProvider<Test> testProvider;
+        private readonly IDataProvider<Test> testProvider;
 
-        private bool isNewTest;
+        private readonly bool isNewTest;
 
         public DefaultRedactingCore(IDataProvider<Test> testProvider, bool isNewTest)
         {

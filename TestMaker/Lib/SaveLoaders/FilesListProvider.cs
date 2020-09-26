@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Lib.SaveLoaders
 {
     public class FilesListProvider
     {
-        private Dictionary<Type, string> extensions;
+        private readonly Dictionary<Type, string> extensions;
 
         public FilesListProvider()
         {
@@ -47,7 +46,7 @@ namespace Lib.SaveLoaders
 
             foreach (var subDirectory in directory.GetDirectories())
             {
-                if (!(subDirectory.Attributes == FileAttributes.Device))
+                if (subDirectory.Attributes != FileAttributes.Device)
                 {
                     pathsList.AddRange(GetFilesOfTypeFromDirectory(type, subDirectory));
                 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Lib.TaskTypes;
-using Newtonsoft.Json;
 
 namespace Lib
 {
@@ -9,20 +8,9 @@ namespace Lib
         public string Name { get; set; }
         public List<Topic> SubTopics { get; set; }
         public List<Task> Tasks { get; set; }
-        public bool HasSubTopics
-        {
-            get
-            {
-                return SubTopics != null && SubTopics.Count != 0;
-            }
-        }
-        public bool HasTasks
-        {
-            get
-            {
-                return Tasks != null && Tasks.Count != 0;
-            }
-        }
+        public bool HasSubTopics => SubTopics != null && SubTopics.Count != 0;
+
+        public bool HasTasks => Tasks != null && Tasks.Count != 0;
 
         public Topic()
         {

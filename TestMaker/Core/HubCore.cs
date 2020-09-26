@@ -1,22 +1,20 @@
 ﻿using Lib.SaveLoaders;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Core
 {
     public class HubCore
     {
-        private FilesListProvider filesProvider;
+        private readonly FilesListProvider filesProvider;
 
         public HubCore()
         {
             filesProvider = new FilesListProvider();
         }
 
-        public List<string> GetFiles<FileType>()
+        public List<string> GetFiles<TFileType>()
         {
-            return filesProvider.GetFilesOfType(typeof(FileType));
+            return filesProvider.GetFilesOfType(typeof(TFileType));
         }
     }
 }

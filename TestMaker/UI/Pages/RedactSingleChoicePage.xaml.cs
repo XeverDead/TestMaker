@@ -1,25 +1,13 @@
 ﻿using Lib.TaskTypes;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace UI.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для RedactSingleChoicePage.xaml
-    /// </summary>
     public partial class RedactSingleChoicePage : Page
     {
-        private SingleChoice task;
+        private readonly SingleChoice task;
 
         public RedactSingleChoicePage(ref SingleChoice task)
         {
@@ -27,60 +15,53 @@ namespace UI.Pages
 
             this.task = task;
 
-            markTextBox.Text = task.Mark.ToString();
+            MarkTextBox.Text = task.Mark.ToString(CultureInfo.InvariantCulture);
 
-            questionTextBox.Text = task.Question;
+            QuestionTextBox.Text = task.Question;
 
             foreach (var option in task.Options)
             {
-                optionsList.Items.Add(new ComboBoxItem() { Content = option });
-                rightOptionSelector.Items.Add(new ComboBoxItem { Content = option });
+                OptionsList.Items.Add(new ComboBoxItem() { Content = option });
+                RightOptionSelector.Items.Add(new ComboBoxItem { Content = option });
             }
             SetAddNewOption();
 
-            rightOptionSelector.SelectedIndex = task.RightAnswerIndex;
+            RightOptionSelector.SelectedIndex = task.RightAnswerIndex;
 
-            setQuestionButton.Click += SetQuestionButtonClick;
-            setOptionButton.Click += SetOptionButtonClick;
-            deleteOptionButton.Click += DeleteOptionButtonClick;
-            setMarkButton.Click += SetMarkButtonClick;
+            SetQuestionButton.Click += SetQuestionButtonClick;
+            SetOptionButton.Click += SetOptionButtonClick;
+            DeleteOptionButton.Click += DeleteOptionButtonClick;
+            SetMarkButton.Click += SetMarkButtonClick;
 
-            optionTextBox.TextChanged += OptionTextBoxTextChanged;
-            questionTextBox.TextChanged += QuestionTextBoxTextChanged;
-            markTextBox.TextChanged += MarkTextBoxTextChanged;
+            OptionTextBox.TextChanged += OptionTextBoxTextChanged;
+            QuestionTextBox.TextChanged += QuestionTextBoxTextChanged;
+            MarkTextBox.TextChanged += MarkTextBoxTextChanged;
 
-            optionsList.SelectionChanged += OptionsListSelectionChanged;
-            rightOptionSelector.SelectionChanged += RightOptionSelectorSelectionChanged;
+            OptionsList.SelectionChanged += OptionsListSelectionChanged;
+            RightOptionSelector.SelectionChanged += RightOptionSelectorSelectionChanged;
 
-            setQuestionButton.IsEnabled = false;
-            setOptionButton.IsEnabled = false;
-            setMarkButton.IsEnabled = false;
+            SetQuestionButton.IsEnabled = false;
+            SetOptionButton.IsEnabled = false;
+            SetMarkButton.IsEnabled = false;
 
-            optionsList.SelectedIndex = 0;
+            OptionsList.SelectedIndex = 0;
         }
 
         private void MarkTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (int.TryParse(markTextBox.Text, out _))
-            {
-                setMarkButton.IsEnabled = true;
-            }
-            else
-            {
-                setMarkButton.IsEnabled = false;
-            }
+            SetMarkButton.IsEnabled = int.TryParse(MarkTextBox.Text, out _);
         }
 
         private void SetMarkButtonClick(object sender, RoutedEventArgs e)
         {
             SetMark();
 
-            setMarkButton.IsEnabled = false;
+            SetMarkButton.IsEnabled = false;
         }
 
         private void SetMark()
         {
-            if (int.TryParse(markTextBox.Text, out int mark))
+            if (int.TryParse(MarkTextBox.Text, out int mark))
             {
                 task.Mark = mark;
             }
@@ -88,7 +69,7 @@ namespace UI.Pages
 
         private void QuestionTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            setQuestionButton.IsEnabled = true;
+            SetQuestionButton.IsEnabled = true;
         }
 
         private void RightOptionSelectorSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -98,25 +79,25 @@ namespace UI.Pages
 
         private void OptionsListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (optionsList.SelectedIndex < task.Options.Count && optionsList.SelectedIndex != -1) 
+            if (OptionsList.SelectedIndex < task.Options.Count && OptionsList.SelectedIndex != -1) 
             {
-                optionTextBox.Text = task.Options[optionsList.SelectedIndex];
+                OptionTextBox.Text = task.Options[OptionsList.SelectedIndex];
 
-                deleteOptionButton.IsEnabled = true;
+                DeleteOptionButton.IsEnabled = true;
             }
             else
             {
-                deleteOptionButton.IsEnabled = false;
+                DeleteOptionButton.IsEnabled = false;
 
-                optionTextBox.Text = string.Empty;
+                OptionTextBox.Text = string.Empty;
             }
 
-            setOptionButton.IsEnabled = false;
+            SetOptionButton.IsEnabled = false;
         }
 
         private void OptionTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            setOptionButton.IsEnabled = true;
+            SetOptionButton.IsEnabled = true;
         }
 
         private void DeleteOptionButtonClick(object sender, RoutedEventArgs e)
@@ -128,44 +109,44 @@ namespace UI.Pages
         {
             SetOptionText();
 
-            setOptionButton.IsEnabled = false;
+            SetOptionButton.IsEnabled = false;
         }
 
         private void SetQuestionButtonClick(object sender, RoutedEventArgs e)
         {
             SetQuestionText();
 
-            setQuestionButton.IsEnabled = false;
+            SetQuestionButton.IsEnabled = false;
         }
 
         private void DeleteSelectedOption()
         {
-            if (optionsList.SelectedIndex < task.Options.Count)
+            if (OptionsList.SelectedIndex < task.Options.Count)
             {
-                var selectedIndex = optionsList.SelectedIndex;
+                var selectedIndex = OptionsList.SelectedIndex;
 
-                var isSelectedRight = rightOptionSelector.SelectedIndex == selectedIndex;
+                var isSelectedRight = RightOptionSelector.SelectedIndex == selectedIndex;
 
-                optionsList.Items.RemoveAt(selectedIndex);
-                rightOptionSelector.Items.RemoveAt(selectedIndex);
+                OptionsList.Items.RemoveAt(selectedIndex);
+                RightOptionSelector.Items.RemoveAt(selectedIndex);
                 task.Options.RemoveAt(selectedIndex);
 
                 if (selectedIndex - 1 >= 0)
                 {
-                    optionsList.SelectedIndex = selectedIndex - 1;
+                    OptionsList.SelectedIndex = selectedIndex - 1;
 
                     if (isSelectedRight)
                     {
-                        rightOptionSelector.SelectedIndex = selectedIndex - 1;
+                        RightOptionSelector.SelectedIndex = selectedIndex - 1;
                     }
                 }
                 else
                 {
-                    optionsList.SelectedIndex = selectedIndex;
+                    OptionsList.SelectedIndex = selectedIndex;
 
                     if (isSelectedRight)
                     {
-                        rightOptionSelector.SelectedIndex = selectedIndex;
+                        RightOptionSelector.SelectedIndex = selectedIndex;
                     }
                 }
 
@@ -175,51 +156,51 @@ namespace UI.Pages
 
         private void SetOptionText()
         {
-            var selectedIndex = optionsList.SelectedIndex;
+            var selectedIndex = OptionsList.SelectedIndex;
 
-            if (optionsList.SelectedIndex < task.Options.Count)
+            if (OptionsList.SelectedIndex < task.Options.Count)
             {
-                task.Options[selectedIndex] = optionTextBox.Text;
+                task.Options[selectedIndex] = OptionTextBox.Text;
 
-                rightOptionSelector.Items[selectedIndex] = new ComboBoxItem() { Content = optionTextBox.Text };
-                optionsList.Items[selectedIndex] = new ComboBoxItem() { Content = optionTextBox.Text };
+                RightOptionSelector.Items[selectedIndex] = new ComboBoxItem() { Content = OptionTextBox.Text };
+                OptionsList.Items[selectedIndex] = new ComboBoxItem() { Content = OptionTextBox.Text };
 
-                optionsList.SelectedIndex = selectedIndex;
-                rightOptionSelector.SelectedIndex = task.RightAnswerIndex;
+                OptionsList.SelectedIndex = selectedIndex;
+                RightOptionSelector.SelectedIndex = task.RightAnswerIndex;
             }
             else
             {
-                task.Options.Add(optionTextBox.Text);
+                task.Options.Add(OptionTextBox.Text);
 
-                var newOptionText = optionTextBox.Text;
+                var newOptionText = OptionTextBox.Text;
 
-                optionsList.Items.RemoveAt(optionsList.SelectedIndex);
+                OptionsList.Items.RemoveAt(OptionsList.SelectedIndex);
 
-                optionsList.Items.Add(new ComboBoxItem() { Content = newOptionText });
-                rightOptionSelector.Items.Add(new ComboBoxItem() { Content = newOptionText });
+                OptionsList.Items.Add(new ComboBoxItem() { Content = newOptionText });
+                RightOptionSelector.Items.Add(new ComboBoxItem() { Content = newOptionText });
 
-                optionsList.SelectedIndex = selectedIndex;
+                OptionsList.SelectedIndex = selectedIndex;
 
                 SetAddNewOption();
             }
 
-            if (rightOptionSelector.SelectedItem != null)
+            if (RightOptionSelector.SelectedItem != null)
             {
-                rightOptionSelector.SelectedIndex = task.RightAnswerIndex;
+                RightOptionSelector.SelectedIndex = task.RightAnswerIndex;
             }
             else
             {
-                rightOptionSelector.SelectedIndex = selectedIndex;
+                RightOptionSelector.SelectedIndex = selectedIndex;
             }
         }
 
-        private void SetQuestionText() => task.Question = questionTextBox.Text;
+        private void SetQuestionText() => task.Question = QuestionTextBox.Text;
 
         private void SetAddNewOption()
         {
-            optionsList.Items.Add(new ComboBoxItem() { Content = "Add new option" });
+            OptionsList.Items.Add(new ComboBoxItem() { Content = "Add new option" });
         }
 
-        private void SetRightAnswerIndex() => task.RightAnswerIndex = rightOptionSelector.SelectedIndex;
+        private void SetRightAnswerIndex() => task.RightAnswerIndex = RightOptionSelector.SelectedIndex;
     }
 }

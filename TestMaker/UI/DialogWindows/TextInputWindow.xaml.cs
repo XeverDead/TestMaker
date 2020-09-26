@@ -1,49 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace UI.DialogWindows
 {
-    /// <summary>
-    /// Логика взаимодействия для RenameWindow.xaml
-    /// </summary>
     public partial class TextInputWindow : Window
     {
         public TextInputWindow(string header)
         {
             InitializeComponent();
 
-            okButton.Click += OkButtonClick;
-            cancelButton.Click += CancelButtonClick;
+            OkButton.Click += OkButtonClick;
+            CancelButton.Click += CancelButtonClick;
 
             if (!(header == null || string.IsNullOrWhiteSpace(header)))
             {
                 Title = header;
             }
 
-            enteredTextBox.ForceCursor = true;
+            EnteredTextBox.ForceCursor = true;
         }
 
-        public string EnteredText
-        {
-            get
-            {
-                if (enteredTextBox.Text == null || string.IsNullOrWhiteSpace(enteredTextBox.Text))
-                {
-                    return "Unknown";
-                }
-
-                return enteredTextBox.Text;
-            }
-        }
+        public string EnteredText => string.IsNullOrWhiteSpace(EnteredTextBox.Text) ? "Unknown" : EnteredTextBox.Text;
 
         private void OkButtonClick(object sender, RoutedEventArgs e)
         {

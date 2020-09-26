@@ -15,14 +15,7 @@ namespace Lib.ResultTypes
             Mark = mark;
             StudentName = studentName;
 
-            if (taskResults == null)
-            {
-                TaskResults = new List<TaskResult>();
-            }
-            else
-            {
-                TaskResults = new List<TaskResult>(taskResults);
-            }
+            TaskResults = taskResults == null ? new List<TaskResult>() : new List<TaskResult>(taskResults);
         }
     }
 }

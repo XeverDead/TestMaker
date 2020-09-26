@@ -1,29 +1,21 @@
 ﻿using Lib;
 using Lib.TaskTypes;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
 using UI.Pages;
 using Core;
-using System.Collections.ObjectModel;
-using System.IO;
+using Lib.SaveLoaders;
 using UI.DialogWindows;
-using System.Printing;
-using System.Security.Cryptography.Xml;
-using System.Net.Http.Headers;
-using System.Threading;
 
 namespace UI.Windows
 {
     public partial class RedactingWindow : Window
     {
-        private DefaultRedactingCore core;
+        private readonly DefaultRedactingCore core;
         private Test test;
 
-        public bool IsLoadedProperely { get; private set; }
+        public bool IsLoadedProperly { get; }
 
         public RedactingWindow(string path, bool isNewTest)
         {
@@ -32,7 +24,7 @@ namespace UI.Windows
             core = new DefaultRedactingCore(new JsonDataProvider<Test>(path), isNewTest);
             test = core.GetTest(out bool wasTestLoaded);
 
-            IsLoadedProperely = wasTestLoaded;
+            IsLoadedProperly = wasTestLoaded;
 
             if (isNewTest)
             {
@@ -50,30 +42,46 @@ namespace UI.Windows
             }
             else
             {
+                if (test.HasPassword)
+                {
+                    var passwordWindow = new TextInputWindow("Enter password");
+
+                    passwordWindow.ShowDialog();
+
+                    if (!passwordWindow.EnteredText.Equals(test.Password))
+                    {
+                        IsLoadedProperly = false;
+
+                        MessageBox.Show("Password is wrong. Returning to hub.");
+
+                        Close();
+                    }
+                }
+
                 SetTestToTree();
 
-                testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
+                TestTree.SelectedItemChanged += TestTreeSelectedItemChanged;
 
-                addTaskButton.IsEnabled = false;
-                addTopicButton.IsEnabled = false;
-                removeButton.IsEnabled = false;
-                renameButton.IsEnabled = false;
+                AddTaskButton.IsEnabled = false;
+                AddTopicButton.IsEnabled = false;
+                RemoveButton.IsEnabled = false;
+                RenameButton.IsEnabled = false;
 
-                addTaskButton.Click += AddTaskButtonClick;
-                addTopicButton.Click += AddTopicButtonClick;
-                removeButton.Click += RemoveButtonClick;
-                renameButton.Click += RenameButtonClick;
-                declineChangesButton.Click += DeclineChangesButtonClick;
-                finishButton.Click += FinishButtonClick;
+                AddTaskButton.Click += AddTaskButtonClick;
+                AddTopicButton.Click += AddTopicButtonClick;
+                RemoveButton.Click += RemoveButtonClick;
+                RenameButton.Click += RenameButtonClick;
+                DeclineChangesButton.Click += DeclineChangesButtonClick;
+                FinishButton.Click += FinishButtonClick;
             }
         }
 
         private void DeclineChangesButtonClick(object sender, RoutedEventArgs e)
         {
-            GoToMenuWithoitSaving();
+            GoToMenuWithoutSaving();
         }
 
-        private void GoToMenuWithoitSaving()
+        private void GoToMenuWithoutSaving()
         {
             var result = MessageBox.Show("Would you like to decline changes and go to main menu?", "Decline changes", MessageBoxButton.YesNo);
 
@@ -88,7 +96,7 @@ namespace UI.Windows
 
         private void RenameButtonClick(object sender, RoutedEventArgs e)
         {
-            Rename(testTree.SelectedItem as TreeViewItem);
+            Rename(TestTree.SelectedItem as TreeViewItem);
         }
 
         private void FinishButtonClick(object sender, RoutedEventArgs e)
@@ -98,17 +106,17 @@ namespace UI.Windows
 
         private void RemoveButtonClick(object sender, RoutedEventArgs e)
         {
-            Remove(testTree.SelectedItem as TreeViewItem);
+            Remove(TestTree.SelectedItem as TreeViewItem);
         }
 
         private void AddTopicButtonClick(object sender, RoutedEventArgs e)
         {
-            AddTopic(testTree.SelectedItem as TreeViewItem);
+            AddTopic(TestTree.SelectedItem as TreeViewItem);
         }
 
         private void AddTaskButtonClick(object sender, RoutedEventArgs e)
         {
-            AddTask(testTree.SelectedItem as TreeViewItem);
+            AddTask(TestTree.SelectedItem as TreeViewItem);
         }
 
         private void FinishRedacting()
@@ -190,37 +198,37 @@ namespace UI.Windows
 
         private void TestTreeSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var selectedItem = testTree.SelectedItem as TreeViewItem;
+            var selectedItem = TestTree.SelectedItem as TreeViewItem;
 
             if (selectedItem.Header is Topic)
             {
-                addTaskButton.IsEnabled = true;
-                addTopicButton.IsEnabled = true;
-                removeButton.IsEnabled = true;
-                renameButton.IsEnabled = true;
+                AddTaskButton.IsEnabled = true;
+                AddTopicButton.IsEnabled = true;
+                RemoveButton.IsEnabled = true;
+                RenameButton.IsEnabled = true;
             }
             else if (selectedItem.Header is Test)
             {
-                addTaskButton.IsEnabled = false;
-                addTopicButton.IsEnabled = true;
-                removeButton.IsEnabled = false;
-                renameButton.IsEnabled = true;
+                AddTaskButton.IsEnabled = false;
+                AddTopicButton.IsEnabled = true;
+                RemoveButton.IsEnabled = false;
+                RenameButton.IsEnabled = true;
             }
             else
             {
-                addTaskButton.IsEnabled = false;
-                addTopicButton.IsEnabled = false;
-                removeButton.IsEnabled = true;
-                renameButton.IsEnabled = false;
+                AddTaskButton.IsEnabled = false;
+                AddTopicButton.IsEnabled = false;
+                RemoveButton.IsEnabled = true;
+                RenameButton.IsEnabled = false;
             }
 
-            SetReadctPage(selectedItem);
+            SetRedactPage(selectedItem);
         }
 
         private void SetTestToTree()
         {
             var headItem = new TreeViewItem() { Header = test };
-            testTree.Items.Add(headItem);
+            TestTree.Items.Add(headItem);
 
             foreach (var topic in test.Topics)
             {
@@ -252,11 +260,11 @@ namespace UI.Windows
             RefreshTreeItem(ref treeItem);
         }
 
-        private void SetReadctPage(TreeViewItem treeItem)
+        private void SetRedactPage(TreeViewItem treeItem)
         {
-            if (settingsGrid.Children.Count > 0)
+            if (SettingsGrid.Children.Count > 0)
             {
-                settingsGrid.Children.RemoveAt(0);
+                SettingsGrid.Children.RemoveAt(0);
             }
 
             var page = new Page();
@@ -280,7 +288,7 @@ namespace UI.Windows
 
             var taskGrid = page.Content as Grid;
             page.Content = null;
-            settingsGrid.Children.Add(taskGrid);
+            SettingsGrid.Children.Add(taskGrid);
         }
 
         private void RefreshTreeItem(ref TreeViewItem treeItem)
@@ -316,86 +324,6 @@ namespace UI.Windows
                     SetTopicItemsToTree(subTopicItem);
                 }
             }
-        }
-
-        private Test GetTempTest()
-        {
-            var option1 = "o1";
-            var option2 = "o2";
-            var option3 = "o3";
-            var option4 = "o4";
-
-            var optionList1 = new List<string>
-            {
-                option1,
-                option2
-            };
-
-            var optionList2 = new List<string>
-            {
-                option3,
-                option4
-            };
-
-            var task1 = new SingleChoice()
-            {
-                Options = optionList1,
-                Question = "q1",
-                RightAnswerIndex = 0,
-                Mark = 1
-            };
-
-            var task2 = new SingleChoice()
-            {
-                Options = optionList2,
-                Question = "q2",
-                RightAnswerIndex = 0,
-                Mark = 2
-            };
-
-            var subSubTopic = new Topic()
-            {
-                Name = "subsub"
-            };
-
-            var subTopic1 = new Topic()
-            {
-                Name = "subTopic",
-                SubTopics = new List<Topic> { subSubTopic }
-            };
-
-            var subTopic2 = new Topic()
-            {
-                Name = "One task",
-                Tasks = new List<Task> { task1 }
-            };
-
-            var topic1 = new Topic()
-            {
-                Name = "Only Tasks",
-                Tasks = new List<Task> { task1, task2 }
-            };
-
-            var topic2 = new Topic()
-            {
-                Name = "Taks and topic",
-                Tasks = new List<Task>() { task2 },
-                SubTopics = new List<Topic> { subTopic1 }
-            };
-
-            var topic3 = new Topic()
-            {
-                Name = "Only topics",
-                SubTopics = new List<Topic> { subTopic1, subTopic2 }
-            };
-
-            var test = new Test()
-            {
-                Name = "test",
-                Topics = new List<Topic> { topic1, topic2, topic3 }
-            };
-
-            return test;
         }
     }
 }

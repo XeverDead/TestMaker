@@ -12,21 +12,21 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Grid x:Name="settingsGrid"></Grid>
+        <Grid x:Name="SettingsGrid"></Grid>
         <GridSplitter Grid.Column="1" Width="3" VerticalAlignment="Stretch" HorizontalAlignment="Center"></GridSplitter>
-        <Grid x:Name="topicsGrid" Grid.Column="2">
+        <Grid x:Name="TopicsGrid" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
-            <TreeView x:Name="testTree" Grid.Column="2"></TreeView>
-            <UniformGrid x:Name="addButtonsGrid" Rows="3" Columns="2" Grid.Row="1">
-                <Button x:Name="addTaskButton" Content="Add task"></Button>
-                <Button x:Name="addTopicButton" Content="Add topic"></Button>
-                <Button x:Name="removeButton" Content="Remove"></Button>
-                <Button x:Name="renameButton" Content="Rename"></Button>
-                <Button x:Name="declineChangesButton" Content="Decline changes"></Button>
-                <Button x:Name="finishButton" Content="Save test"></Button>
+            <TreeView x:Name="TestTree" Grid.Column="2"></TreeView>
+            <UniformGrid x:Name="AddButtonsGrid" Rows="3" Columns="2" Grid.Row="1">
+                <Button x:Name="AddTaskButton" Content="Add task"></Button>
+                <Button x:Name="AddTopicButton" Content="Add topic"></Button>
+                <Button x:Name="RemoveButton" Content="Remove"></Button>
+                <Button x:Name="RenameButton" Content="Rename"></Button>
+                <Button x:Name="DeclineChangesButton" Content="Decline changes"></Button>
+                <Button x:Name="FinishButton" Content="Save test"></Button>
             </UniformGrid>
         </Grid>
     </Grid>
