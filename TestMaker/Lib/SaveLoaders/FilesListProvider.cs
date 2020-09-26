@@ -23,6 +23,10 @@ namespace Lib.SaveLoaders
         {
             if (extensions.ContainsKey(type))
             {
+                if (!Directory.Exists("Tests"))
+                {
+                    Directory.CreateDirectory("Tests");
+                }
                 return GetFilesOfTypeFromDirectory(type, new DirectoryInfo("Tests"));
             }
 

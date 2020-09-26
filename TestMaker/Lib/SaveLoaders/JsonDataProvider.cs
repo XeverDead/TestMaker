@@ -23,6 +23,11 @@ namespace Lib
 
         public void Save(TData data)
         {
+            if (!Directory.Exists(path.Substring(0, path.LastIndexOf('\\'))))
+            {
+                Directory.CreateDirectory(path.Substring(0, path.LastIndexOf('\\')));
+            }
+
             using (var writer = new StreamWriter($"{path}"))
             {
                 writer.WriteLine(JsonConvert.SerializeObject(data, serializerSettings));

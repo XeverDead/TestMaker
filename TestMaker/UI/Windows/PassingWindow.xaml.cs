@@ -47,6 +47,7 @@ namespace UI
 
         private bool isShowingResults;
 
+        private DispatcherTimer timer;
         private int timeLeft;
         public PassingWindow(string testPath, string resultPath, bool isShowingResults, string studentName)
         { 
@@ -205,13 +206,13 @@ namespace UI
             }
             else if (tasks[currentTaskIndex] is MultipleChoice mcTask)
             {
-                if (results[currentTaskIndex].Answer != null)
-                {
-                    currentPage = new MultipleChoicePage(mcTask, results[currentTaskIndex].Answer);
-                }
-                else if (isShowingResults) 
+                if (isShowingResults)
                 {
                     currentPage = new MultipleChoicePage(mcTask, results[currentTaskIndex].Answer, mcTask.RightAnswersIndexes);
+                }
+                else if (results[currentTaskIndex].Answer != null)
+                {
+                    currentPage = new MultipleChoicePage(mcTask, results[currentTaskIndex].Answer);
                 }
                 else
                 {
@@ -244,6 +245,11 @@ namespace UI
             else
             {
                 result = MessageBox.Show("Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
+
+                if (timer != null)
+                {
+                    timer.Stop();
+                }
             }
 
             if (result == MessageBoxResult.Yes || isTimeOver)
@@ -343,7 +349,7 @@ namespace UI
                 timeLeft = testView.Test.Time;
                 timeViewer.Text = $"Time left: {timeLeft} seconds";
 
-                var timer = new DispatcherTimer(DispatcherPriority.Send)
+                timer = new DispatcherTimer(DispatcherPriority.Send)
                 {
                     Interval = TimeSpan.FromSeconds(1),
                 };
@@ -359,8 +365,6 @@ namespace UI
 
         private void TimerTick(object sender, EventArgs e)
         {
-            var timer = sender as DispatcherTimer;
-
             timeViewer.Text = $"Time left: {--timeLeft} seconds";
 
             if (timeLeft <= 0)
