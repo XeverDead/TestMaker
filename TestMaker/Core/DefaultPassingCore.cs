@@ -53,6 +53,7 @@ namespace Core
                 }
             }
 
+
             if (!wasTestLoaded)
             {
                 return null;
@@ -73,6 +74,11 @@ namespace Core
                 Test = test,
                 TasksAndTopics = tasksAndTopics
             };
+
+            if (testView.TasksAndTopics.Count == 0)
+            {
+                wasTestLoaded = false;
+            }
 
             return testView;
         }
