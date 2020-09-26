@@ -99,12 +99,9 @@ namespace Core
             {
                 foreach (var subTopic in topic.SubTopics)
                 {
-                    if (subTopic.HasSubTopics)
+                    foreach (var pair in GetTasksFromTopic(subTopic))
                     {
-                        foreach (var pair in GetTasksFromTopic(subTopic))
-                        {
-                            tasksAndTopics.Add(pair.Key, pair.Value);
-                        }
+                        tasksAndTopics.Add(pair.Key, pair.Value);
                     }
                 }
             }
