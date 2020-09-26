@@ -23,28 +23,33 @@ namespace Lib.SaveLoaders
         {
             if (extensions.ContainsKey(type))
             {
-                var pathsList = new List<string>();
-
-                var directory = new DirectoryInfo("Tests");
-
-                foreach (var subDirectory in directory.GetDirectories())
-                {
-                    if (!(subDirectory.Attributes == FileAttributes.Device))
-                    {
-                        foreach (var file in subDirectory.GetFiles())
-                        {
-                            if (file.Extension == extensions[type])
-                            {
-                                pathsList.Add(file.FullName);
-                            }
-                        }
-                    }
-                }
-
-                return pathsList;
+                return GetFilesOfTypeFromDirectory(type, new DirectoryInfo("Tests"));
             }
 
             return null;
+        }
+
+        private List<string> GetFilesOfTypeFromDirectory(Type type, DirectoryInfo directory)
+        {
+            var pathsList = new List<string>();
+
+            foreach (var file in directory.GetFiles())
+            {
+                if (file.Extension == extensions[type])
+                {
+                    pathsList.Add(file.FullName);
+                }
+            }
+
+            foreach (var subDirectory in directory.GetDirectories())
+            {
+                if (!(subDirectory.Attributes == FileAttributes.Device))
+                {
+                    pathsList.AddRange(GetFilesOfTypeFromDirectory(type, subDirectory));
+                }
+            }
+
+            return pathsList;
         }
     }
 }

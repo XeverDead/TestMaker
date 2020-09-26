@@ -46,10 +46,6 @@ namespace UI.Windows
             {
                 MessageBox.Show("Test file was corrupted. Returning to hub.");
 
-                //var hubWindow = new HubWindow(TestActions.RedactTest);
-
-                //hubWindow.Show();
-
                 Close();
             }
             else
@@ -279,7 +275,7 @@ namespace UI.Windows
             }
             else if (treeItem.Header is Test)
             {
-                return;
+                page = new RedactTestPage(ref test);
             }
 
             var taskGrid = page.Content as Grid;

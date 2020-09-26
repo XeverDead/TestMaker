@@ -27,6 +27,8 @@ namespace UI.Pages
 
             this.task = task;
 
+            markTextBox.Text = task.Mark.ToString();
+
             questionTextBox.Text = task.Question;
 
             foreach (var option in task.Options)
@@ -34,12 +36,13 @@ namespace UI.Pages
                 optionsList.Items.Add(new ComboBoxItem() { Content = option });
 
                 var rightAnswerCheckBox = new CheckBox() { Content = option };
-                rightAnswerCheckBox.Checked += RightAnswerCheckBoxChecked;
-                rightAnswerCheckBox.Unchecked += RightAnswerCheckBoxUnchecked;
                 if (task.RightAnswersIndexes.Contains(task.Options.IndexOf(option)))
                 {
                     rightAnswerCheckBox.IsChecked = true;
                 }
+
+                rightAnswerCheckBox.Checked += RightAnswerCheckBoxChecked;
+                rightAnswerCheckBox.Unchecked += RightAnswerCheckBoxUnchecked;
 
                 rightOptionsSelector.Children.Add(rightAnswerCheckBox);
             }
@@ -67,48 +70,16 @@ namespace UI.Pages
         private void RightAnswerCheckBoxUnchecked(object sender, RoutedEventArgs e)
         {
             RemoveRightAnswerIndex(rightOptionsSelector.Children.IndexOf(sender as CheckBox));
-
-            var text = string.Empty;
-
-            foreach (var option in task.Options)
-            {
-                text += option + "\t";
-            }
-
-            text += "\n";
-
-            foreach (var index in task.RightAnswersIndexes)
-            {
-                text += index + "\t";
-            }
-
-            MessageBox.Show(text);
         }
 
         private void RightAnswerCheckBoxChecked(object sender, RoutedEventArgs e)
         {
             AddRightAnswerIndex(rightOptionsSelector.Children.IndexOf(sender as CheckBox));
-
-            var text = string.Empty;
-
-            foreach (var option in task.Options)
-            {
-                text += option + "\t";
-            }
-
-            text += "\n";
-
-            foreach (var index in task.RightAnswersIndexes)
-            {
-                text += index + "\t";
-            }
-
-            MessageBox.Show(text);
         }
 
         private void MarkTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (int.TryParse(markTextBox.Text, out _))
+            if (int.TryParse(markTextBox.Text, out int mark) && mark >= 0) 
             {
                 setMarkButton.IsEnabled = true;
             }

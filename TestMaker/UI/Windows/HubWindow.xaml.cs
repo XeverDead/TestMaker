@@ -106,9 +106,9 @@ namespace UI.Windows
                     var studentName = textInputWindow.EnteredText;
 
                     var testPath = filePaths[pathsList.SelectedIndex];
-                    var testDirectory = testPath[0..^4];
+                    var testDirectory = testPath.Substring(0, testPath.LastIndexOf('\\'));
 
-                    var passingWindow = new PassingWindow(testPath, $"Tests\\{testDirectory}\\{studentName}.tmr", false, studentName);
+                    var passingWindow = new PassingWindow(testPath, $"{testDirectory}\\Results\\{studentName}.tmr", false, studentName);
 
                     if (passingWindow.IsLoadedProperely)
                     {

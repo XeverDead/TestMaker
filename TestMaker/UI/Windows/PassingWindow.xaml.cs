@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using UI.DialogWindows;
 using UI.Pages;
 using UI.Windows;
@@ -45,9 +46,13 @@ namespace UI
         private Dictionary<Task, TreeViewItem> tasksTreeItems;
 
         private bool isShowingResults;
+
+        private int timeLeft;
         public PassingWindow(string testPath, string resultPath, bool isShowingResults, string studentName)
         { 
             InitializeComponent();
+
+            IsLoadedProperely = true;
 
             this.isShowingResults = isShowingResults;
 
@@ -63,25 +68,21 @@ namespace UI
                 {
                     MessageBox.Show("Result file was corrupted. Returning to hub.");
 
-                    var hubWindow = new HubWindow(TestActions.ViewResult);
-
                     Close();
                 }
             }
 
             testView = core.GetTest(out bool wasTestLoaded);
 
-            IsLoadedProperely = wasTestLoaded;
-
-            if (!wasTestLoaded)
+            if (!wasTestLoaded && IsLoadedProperely)
             {
-                MessageBox.Show("Test file was corrupted. Returning to hub.");
+                IsLoadedProperely = wasTestLoaded;
 
-                var hubWindow = new HubWindow(TestActions.PassTest);
+                MessageBox.Show("Test file was corrupted. Returning to hub.");
 
                 Close();
             }
-            else
+            else if (wasTestLoaded) 
             {
                 tasks = new List<Task>(testView.TasksAndTopics.Keys);
                 currentTaskIndex = 0;
@@ -106,8 +107,12 @@ namespace UI
                 testTree.SelectedItemChanged += TestTreeSelectedItemChanged;
 
                 SetTestToTree();
-
                 SetNewPage();
+
+                if (!isShowingResults)
+                {
+                    SetTime();
+                }
             }
         }
 
@@ -167,7 +172,7 @@ namespace UI
             {
                 SaveAnswer();
 
-                AskToMoveToResultScreen();
+                AskToMoveToResultScreen(false);
             }
         }
 
@@ -228,11 +233,20 @@ namespace UI
             }
         }
     
-        private void AskToMoveToResultScreen()
+        private void AskToMoveToResultScreen(bool isTimeOver)
         {
-            var result = MessageBox.Show("Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
+            var result = MessageBoxResult.No;
 
-            if (result == MessageBoxResult.Yes)
+            if (isTimeOver)
+            {
+                MessageBox.Show("Test time is over. Moving to result screen");
+            }
+            else
+            {
+                result = MessageBox.Show("Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
+            }
+
+            if (result == MessageBoxResult.Yes || isTimeOver)
             {
                 core.SetMarksToResults(ref results, out double maxMark);
                 core.SaveResult(results, studentName);
@@ -245,10 +259,11 @@ namespace UI
                     totalMark += taskResult.Mark;
                 }
 
-                marks.Append("You've got " + totalMark + " out of " + maxMark + "points\nWould you like to check your answers?");
+                marks.Append("You've got " + totalMark + " out of " + maxMark + " points\nWould you like to check your answers?");
 
                 if (MessageBox.Show(marks.ToString(), "Result", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
+                    timeViewer.Text = "Watch results as long as you want";
 
                     isShowingResults = true;
 
@@ -318,6 +333,43 @@ namespace UI
                     topicItem.Items.Add(subTopicItem);
                     SetTopicItemsToTree(subTopicItem);
                 }
+            }
+        }
+
+        private void SetTime()
+        {
+            if (testView.Test.IsTimeLimited)
+            {
+                timeLeft = testView.Test.Time;
+                timeViewer.Text = $"Time left: {timeLeft} seconds";
+
+                var timer = new DispatcherTimer(DispatcherPriority.Send)
+                {
+                    Interval = TimeSpan.FromSeconds(1),
+                };
+
+                timer.Tick += TimerTick;
+                timer.Start();
+            }
+            else
+            {
+                timeViewer.Text = $"Time unlimited";
+            }
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            var timer = sender as DispatcherTimer;
+
+            timeViewer.Text = $"Time left: {--timeLeft} seconds";
+
+            if (timeLeft <= 0)
+            {
+                timer.Stop();
+
+                SaveAnswer();
+
+                AskToMoveToResultScreen(true);
             }
         }
     }

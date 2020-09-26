@@ -34,9 +34,11 @@ namespace Core
                     GetResults(out bool wereResultsLoaded);
 
                     wasTestLoaded = wereResultsLoaded;
-                }              
-
-                test = testResult.Test;
+                }
+                else
+                {
+                    test = testResult.Test;
+                }
             }
             else
             {
@@ -118,7 +120,10 @@ namespace Core
                     continue;
                 }
 
-                mark += result.Task.CountMark(result.Answer);
+                var taskMark = result.Task.CountMark(result.Answer);
+                result.Mark = taskMark;
+
+                mark += taskMark;
             }
         }
 
@@ -134,7 +139,7 @@ namespace Core
                     continue;
                 }
 
-                mark += result.Task.CountMark(result.Answer);
+                mark += result.Mark;
             }
 
             testResult = new TestResult(test, results, mark, studentName);

@@ -72,7 +72,7 @@ namespace UI
                 AddOption(optionNum, task.Options[optionNum]);
             }
 
-            if (chosenButtonIndex > 0)
+            if (chosenButtonIndex >= 0)
             {
                 if (chosenButtonIndex == rightAnswerIndex)
                 {

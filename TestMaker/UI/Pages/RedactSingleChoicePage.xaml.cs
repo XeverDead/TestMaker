@@ -27,6 +27,8 @@ namespace UI.Pages
 
             this.task = task;
 
+            markTextBox.Text = task.Mark.ToString();
+
             questionTextBox.Text = task.Question;
 
             foreach (var option in task.Options)

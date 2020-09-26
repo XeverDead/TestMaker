@@ -8,18 +8,22 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="10*"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="17*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="taskGrid">
+        <Grid x:Name="timeGrid">
+            <TextBlock x:Name="timeViewer" Text ="Watch results as long as you want" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+        </Grid>
+        <Grid x:Name="taskGrid" Grid.Row="1">
             
         </Grid>
-        <Grid x:Name="buttonGrid" Grid.Row="1">
+        <Grid x:Name="buttonGrid" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
