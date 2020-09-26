@@ -244,16 +244,16 @@ namespace UI
             }
             else
             {
-                result = MessageBox.Show("Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
-
-                if (timer != null)
-                {
-                    timer.Stop();
-                }
+                result = MessageBox.Show(this, "Would you like to finish this try?", "Ending", MessageBoxButton.YesNo);
             }
 
             if (result == MessageBoxResult.Yes || isTimeOver)
             {
+                if (timer != null && !isTimeOver)
+                {
+                    timer.Stop();
+                }
+
                 core.SetMarksToResults(ref results, out double maxMark);
                 core.SaveResult(results, studentName);
 
