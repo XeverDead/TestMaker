@@ -63,19 +63,36 @@ namespace UI.Pages
                 AddOption(optionNum, task.Options[optionNum]);
             }
 
-            for (var index = 0; index < optionButtons.Count; index++)
+            if (rightAnswersIndexes == null)
             {
-                if (chosenButtonIndexes.Contains(index) && rightAnswersIndexes.Contains(index))
+
+            }
+            else if (chosenButtonIndexes == null)
+            {
+                foreach (var optionButton in optionButtons)
                 {
-                    optionButtons[index].Background = new SolidColorBrush(chosenRightOptionColor);
+                    if (rightAnswersIndexes.Contains(optionButtons.IndexOf(optionButton)))
+                    {
+                        optionButton.Background = new SolidColorBrush(notChosenRightOptionColor);
+                    }
                 }
-                else if (!chosenButtonIndexes.Contains(index) && rightAnswersIndexes.Contains(index))
+            }
+            else
+            {
+                for (var index = 0; index < optionButtons.Count; index++)
                 {
-                    optionButtons[index].Background = new SolidColorBrush(notChosenRightOptionColor);
-                }
-                else if (chosenButtonIndexes.Contains(index) && !rightAnswersIndexes.Contains(index))
-                {
-                    optionButtons[index].Background = new SolidColorBrush(chosenWrongOptionColor);
+                    if (chosenButtonIndexes.Contains(index) && rightAnswersIndexes.Contains(index))
+                    {
+                        optionButtons[index].Background = new SolidColorBrush(chosenRightOptionColor);
+                    }
+                    else if (!chosenButtonIndexes.Contains(index) && rightAnswersIndexes.Contains(index))
+                    {
+                        optionButtons[index].Background = new SolidColorBrush(notChosenRightOptionColor);
+                    }
+                    else if (chosenButtonIndexes.Contains(index) && !rightAnswersIndexes.Contains(index))
+                    {
+                        optionButtons[index].Background = new SolidColorBrush(chosenWrongOptionColor);
+                    }
                 }
             }
 
